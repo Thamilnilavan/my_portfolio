@@ -2,13 +2,13 @@ export const gallery = [
   {
     id: 1,
     title: "Photo 1",
-    src: "/assets/gallery/my image.jpeg",
+    src: "/assets/gallery/myimage1.jpeg",
     category: "Personal",
   },
   {
     id: 2,
     title: "Photo 2",
-    src: "/assets/gallery/my image2.jpeg",
+    src: "/assets/gallery/myimage2.jpeg",
     category: "Personal",
   },
   {
