@@ -1,35 +1,33 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export function useTypewriter(words, speed = 100, deleteSpeed = 50, delay = 2000) {
-  const [text, setText] = useState("");
+export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000) {
+  const [displayText, setDisplayText] = useState("");
+  const [textIndex, setTextIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [loopNum, setLoopNum] = useState(0);
 
   useEffect(() => {
-    const i = loopNum % words.length;
-    const fullText = words[i];
-
-    let typeSpeed = isDeleting ? deleteSpeed : speed;
-
+    const currentText = texts[textIndex];
+    
     const timeout = setTimeout(() => {
-      setText((current) => {
-        if (isDeleting) {
-          return fullText.substring(0, current.length - 1);
+      if (!isDeleting) {
+        if (displayText.length < currentText.length) {
+          setDisplayText(currentText.slice(0, displayText.length + 1));
+        } else {
+          setTimeout(() => setIsDeleting(true), pauseDuration);
         }
-        return fullText.substring(0, current.length + 1);
-      });
-
-      if (!isDeleting && text === fullText) {
-        setTimeout(() => setIsDeleting(true), delay);
-      } else if (isDeleting && text === "") {
-        setIsDeleting(false);
-        setLoopNum(loopNum + 1);
+      } else {
+        if (displayText.length > 0) {
+          setDisplayText(displayText.slice(0, -1));
+        } else {
+          setIsDeleting(false);
+          setTextIndex((prev) => (prev + 1) % texts.length);
+        }
       }
-    }, typeSpeed);
+    }, isDeleting ? deletingSpeed : typingSpeed);
 
     return () => clearTimeout(timeout);
-  }, [text, isDeleting, loopNum, words, speed, deleteSpeed, delay]);
+  }, [displayText, isDeleting, textIndex, texts, typingSpeed, deletingSpeed, pauseDuration]);
 
-  return text;
+  return displayText;
 }
