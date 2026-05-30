@@ -1,0 +1,16 @@
+export const settings = {
+  name: "Uthayarasa Thamilnilavan",
+  availabilityText: "Available for new opportunities",
+  heroBio: "I am a motivated and detail-oriented Software Developer with hands-on experience in full-stack web and mobile application development. I am deeply passionate about building efficient digital solutions and continuous learning.",
+  typewriterRoles: "Full-Stack Developer, Mobile Developer, UI/UX Designer",
+  cvUrl: "/assets/cv/Thamilnilavan.pdf",
+  email: "Pavasuthan2002@gmail.com",
+  phone: "(+94) 72 153 0002",
+  location: "Kilinochchi, Sri Lanka 4400",
+  github: "https://github.com/Thamilnilavan",
+  linkedin: "https://www.linkedin.com/in/uthayaraja-thamilnilavan-ba39b930a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app",
+  twitter: "https://x.com/tamil_038?s=11",
+  instagram: "https://www.instagram.com/tamilnilavan_3?igsh=ajN1MjFvOWN3bGtt&utm_source=qr",
+  whatsapp: "https://wa.me/94721530002",
+  aboutText: "I am a motivated and detail-oriented Software Developer with hands-on experience in full-stack web and mobile application development. I am deeply passionate about building efficient digital solutions and continuous learning. My technical foundation spans across modern frontend frameworks like React.js as well as versatile programming languages and database tools including Java, PHP, C++, and MySQL. From architecting real-time collaboration platforms to engineering dynamic backend management systems, I enjoy applying structured problem-solving skills to turn complex ideas into clean, maintainable code. I am highly adaptable, value strong teamwork, and thrive in fast-paced environments where I can build impactful user experiences and grow as an engineer.",
+};
