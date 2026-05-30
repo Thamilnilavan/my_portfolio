@@ -12,8 +12,11 @@ import DevIndicatorRemover from "@/components/effects/DevIndicatorRemover";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "Thami | Full-Stack Developer & UI/UX Designer",
-  description: "Award-winning portfolio of Thami, a senior full-stack developer and UI/UX designer specializing in creating premium digital experiences.",
+  title: "Thamil | Full-Stack Developer & UI/UX Designer",
+  description: " portfolio of Thamil, a senior full-stack developer and UI/UX designer specializing in creating premium digital experiences.",
+  icons: {
+    icon: "/assets/my1.png",
+  },
 };
 
 export default function RootLayout({ children }) {
