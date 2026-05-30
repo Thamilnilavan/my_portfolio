@@ -31,11 +31,14 @@ export default function DevIndicatorRemover() {
       });
     };
 
-    // Run immediately and periodically to catch dynamically injected elements
-    removeDevIndicators();
-    const interval = setInterval(removeDevIndicators, 1000);
+    // Run after a delay to avoid router initialization errors
+    const timeout = setTimeout(() => {
+      removeDevIndicators();
+      const interval = setInterval(removeDevIndicators, 1000);
+      return () => clearInterval(interval);
+    }, 2000);
 
-    return () => clearInterval(interval);
+    return () => clearTimeout(timeout);
   }, []);
 
   return null;

@@ -3,7 +3,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useState, useEffect } from "react";
 import { HiArrowDown, HiOutlineDownload, HiPlay } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaReact, FaNodeJs, FaPython, FaDatabase, FaCloud, FaCode } from "react-icons/fa";
-import { SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript, SiMongodb, SiFirebase, SiGit, SiDocker, SiPostgresql } from "react-icons/si";
+import { SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript, SiMongodb, SiGit, SiDocker, SiPostgresql } from "react-icons/si";
 import Button from "../ui/Button";
 import MagneticButton from "../effects/MagneticButton";
 import TextReveal from "../effects/TextReveal";
@@ -44,7 +44,6 @@ export default function Hero() {
     { Icon: SiJavascript, color: "#F7DF1E", size: 24 },
     { Icon: SiTypescript, color: "#3178C6", size: 24 },
     { Icon: SiMongodb, color: "#47A248", size: 24 },
-    { Icon: SiFirebase, color: "#FFCA28", size: 24 },
     { Icon: SiGit, color: "#F05032", size: 24 },
     { Icon: SiDocker, color: "#2496ED", size: 24 },
     { Icon: SiPostgresql, color: "#4169E1", size: 24 },
