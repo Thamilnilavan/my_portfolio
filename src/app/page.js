@@ -8,13 +8,11 @@ import Services from "@/components/public/Services";
 import Gallery from "@/components/public/Gallery";
 import Contact from "@/components/public/Contact";
 import Footer from "@/components/public/Footer";
-import PageLoader from "@/components/effects/PageLoader";
 import SectionTransition from "@/components/effects/SectionTransition";
 
 export default function Home() {
   return (
     <>
-      <PageLoader />
       <Navbar />
       
       <main className="flex flex-col min-h-screen">
