@@ -5,7 +5,6 @@ import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
-import MagneticButton from "../effects/MagneticButton";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
 import { FaWhatsapp, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import toast from "react-hot-toast";
@@ -76,7 +75,7 @@ export default function Contact() {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
               >
-                <GlassCard className="!p-6 flex items-center gap-4 group">
+                <GlassCard className="!p-6 flex items-center gap-4 group" tilt={false}>
                   <div className="w-12 h-12 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:scale-110 group-hover:bg-cyan-500/20 transition-all duration-300">
                     <info.icon size={24} />
                   </div>
@@ -126,7 +125,7 @@ export default function Contact() {
             viewport={{ once: true }}
             className="lg:col-span-3"
           >
-            <GlassCard className="!p-8">
+            <GlassCard className="!p-8" tilt={false}>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid sm:grid-cols-2 gap-6">
                   <Input label="Your Name" name="name" value={formData.name} onChange={handleChange} required />
@@ -134,13 +133,13 @@ export default function Contact() {
                 </div>
                 <Input label="Subject" name="subject" value={formData.subject} onChange={handleChange} required />
                 <Input label="Message" type="textarea" name="message" value={formData.message} onChange={handleChange} required />
-                <MagneticButton 
+                <button 
                   type="submit" 
                   disabled={loading} 
                   className="w-full px-8 py-3 bg-gradient-to-r from-cyan-400 to-purple-600 text-white font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
                   {loading ? "Sending..." : "Send Message"}
-                </MagneticButton>
+                </button>
               </form>
             </GlassCard>
           </motion.div>

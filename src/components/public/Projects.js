@@ -55,7 +55,7 @@ export default function Projects() {
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.4, delay: i * 0.1 }}
               >
-                <GlassCard className="h-full flex flex-col !p-0 group">
+                <GlassCard className="h-full flex flex-col !p-0 group" tilt={false}>
                   {/* Image Area */}
                   <div className="relative h-56 w-full overflow-hidden bg-[#0c0c14]">
                     {project.image ? (
