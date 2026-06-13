@@ -35,7 +35,7 @@ export const projects = [
     description: "Designed and engineered a responsive fitness management website featuring dynamic functionalities. The platform securely supports user login, service registration, dynamic blog posts, and robust administrative control panels.",
     image: "/assets/project/FitZone Fitness.png",
     techStack: ["HTML", "CSS", "JavaScript", "PHP", "MySQL"],
-    github: "https://github.com/Thamilnilavan/fitnessfitzone",
+    github: "https://github.com/Thamilnilavan",
     liveUrl: "",
     category: "Full Stack",
   },
