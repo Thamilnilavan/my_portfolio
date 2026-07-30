@@ -1,19 +1,32 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useId, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HiX } from "react-icons/hi";
 
 export default function Modal({ isOpen, onClose, children, title }) {
+  const titleId = useId();
+  const closeButtonRef = useRef(null);
+
   useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement;
+
     if (isOpen) {
       document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
+      closeButtonRef.current?.focus();
     }
-    return () => {
-      document.body.style.overflow = "unset";
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") onClose();
     };
-  }, [isOpen]);
+    if (isOpen) document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", handleKeyDown);
+      previouslyFocused?.focus?.();
+    };
+  }, [isOpen, onClose]);
 
   return (
     <AnimatePresence>
@@ -31,11 +44,17 @@ export default function Modal({ isOpen, onClose, children, title }) {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             className="relative w-full max-w-2xl bg-[#0c0c14] border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={titleId}
           >
             <div className="flex items-center justify-between p-6 border-b border-white/10">
-              <h3 className="text-xl font-bold text-white">{title}</h3>
+              <h3 id={titleId} className="text-xl font-bold text-white">{title}</h3>
               <button
+                ref={closeButtonRef}
+                type="button"
                 onClick={onClose}
+                aria-label="Close dialog"
                 className="p-2 text-gray-400 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
               >
                 <HiX size={20} />

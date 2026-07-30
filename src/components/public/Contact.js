@@ -43,9 +43,9 @@ export default function Contact() {
   ];
 
   const socials = [
-    { Icon: FaGithub, href: s.github },
-    { Icon: FaLinkedin, href: s.linkedin },
-    { Icon: FaTwitter, href: s.twitter },
+    { Icon: FaGithub, href: s.github, label: "GitHub" },
+    { Icon: FaLinkedin, href: s.linkedin, label: "LinkedIn" },
+    { Icon: FaTwitter, href: s.twitter, label: "X" },
   ].filter((item) => item.href);
 
   const whatsappHref = s.whatsapp?.startsWith("http")
@@ -103,12 +103,13 @@ export default function Contact() {
               >
                 <p className="text-gray-400 mb-4">Connect with me on social media:</p>
                 <div className="flex gap-4">
-                  {socials.map(({ Icon, href }, i) => (
+                  {socials.map(({ Icon, href, label }) => (
                     <a
-                      key={i}
+                      key={label}
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
+                      aria-label={`Visit my ${label} profile`}
                       className="w-10 h-10 rounded-full glass flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 hover:-translate-y-1 transition-all duration-300"
                     >
                       <Icon size={18} />
@@ -151,6 +152,7 @@ export default function Contact() {
           href={whatsappHref}
           target="_blank"
           rel="noopener noreferrer"
+          aria-label="Contact me on WhatsApp"
           className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-green-500 text-white flex items-center justify-center shadow-[0_0_20px_rgba(34,197,94,0.4)] z-50 hover:scale-110 hover:bg-green-400 transition-all duration-300 hidden md:flex"
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}

@@ -7,14 +7,19 @@ export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, paus
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
+    if (!texts.length) {
+      return undefined;
+    }
+
     const currentText = texts[textIndex];
+    let pauseTimeout;
     
     const timeout = setTimeout(() => {
       if (!isDeleting) {
         if (displayText.length < currentText.length) {
           setDisplayText(currentText.slice(0, displayText.length + 1));
         } else {
-          setTimeout(() => setIsDeleting(true), pauseDuration);
+          pauseTimeout = setTimeout(() => setIsDeleting(true), pauseDuration);
         }
       } else {
         if (displayText.length > 0) {
@@ -26,7 +31,10 @@ export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, paus
       }
     }, isDeleting ? deletingSpeed : typingSpeed);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      clearTimeout(pauseTimeout);
+    };
   }, [displayText, isDeleting, textIndex, texts, typingSpeed, deletingSpeed, pauseDuration]);
 
   return displayText;

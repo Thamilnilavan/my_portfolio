@@ -32,13 +32,16 @@ export default function DevIndicatorRemover() {
     };
 
     // Run after a delay to avoid router initialization errors
+    let interval;
     const timeout = setTimeout(() => {
       removeDevIndicators();
-      const interval = setInterval(removeDevIndicators, 1000);
-      return () => clearInterval(interval);
+      interval = setInterval(removeDevIndicators, 1000);
     }, 2000);
 
-    return () => clearTimeout(timeout);
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, []);
 
   return null;

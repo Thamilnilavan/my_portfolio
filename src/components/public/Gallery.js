@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import Modal from "../ui/Modal";
@@ -28,11 +29,22 @@ export default function Gallery() {
                 transition={{ delay: i * 0.1 }}
                 className="relative overflow-hidden rounded-2xl group cursor-pointer break-inside-avoid"
                 onClick={() => setSelectedImage(item)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setSelectedImage(item);
+                  }
+                }}
+                role="button"
+                tabIndex={0}
+                aria-label={`Open ${item.title}`}
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   src={item.src}
                   alt={item.title}
+                  width={800}
+                  height={600}
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/90 via-[#050508]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
@@ -56,8 +68,14 @@ export default function Gallery() {
         <Modal isOpen={!!selectedImage} onClose={() => setSelectedImage(null)} title={selectedImage?.title}>
           {selectedImage && (
             <div className="relative w-full rounded-lg overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={selectedImage.src} alt={selectedImage.title} className="w-full h-auto" />
+              <Image
+                src={selectedImage.src}
+                alt={selectedImage.title}
+                width={1200}
+                height={900}
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="w-full h-auto"
+              />
             </div>
           )}
         </Modal>

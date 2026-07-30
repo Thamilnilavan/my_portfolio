@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
@@ -10,7 +11,7 @@ import { projects } from "@/data/projects";
 
 export default function Projects() {
   const [activeCategory, setActiveCategory] = useState("All");
-  const categories = ["All", "Full Stack", "Frontend", "Backend"];
+  const categories = ["All", ...new Set(projects.map((project) => project.category))];
 
   const filteredProjects = activeCategory === "All"
     ? projects
@@ -59,8 +60,13 @@ export default function Projects() {
                   {/* Image Area */}
                   <div className="relative h-56 w-full overflow-hidden bg-[#0c0c14]">
                     {project.image ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={project.image} alt={project.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                      <Image
+                        src={project.image}
+                        alt={project.title}
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-cyan-500/10 to-purple-600/10 text-white/20">
                         <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,12 +78,12 @@ export default function Projects() {
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-[#050508]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
                       {project.github && (
-                        <a href={project.github} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 hover:bg-cyan-500 rounded-full text-white transition-colors cursor-pointer">
+                        <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} source code on GitHub`} className="p-3 bg-white/10 hover:bg-cyan-500 rounded-full text-white transition-colors cursor-pointer">
                           <FaGithub size={20} />
                         </a>
                       )}
                       {project.liveUrl && (
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="p-3 bg-white/10 hover:bg-purple-500 rounded-full text-white transition-colors cursor-pointer">
+                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open the live ${project.title} project`} className="p-3 bg-white/10 hover:bg-purple-500 rounded-full text-white transition-colors cursor-pointer">
                           <FaExternalLinkAlt size={20} />
                         </a>
                       )}

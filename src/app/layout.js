@@ -7,7 +7,6 @@ import FloatingParticles from "@/components/effects/FloatingParticles";
 import MouseGlow from "@/components/effects/MouseGlow";
 import ScrollProgress from "@/components/effects/ScrollProgress";
 import ServiceWorkerRegister from "@/components/effects/ServiceWorkerRegister";
-import DevIndicatorRemover from "@/components/effects/DevIndicatorRemover";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +16,13 @@ export const metadata = {
   icons: {
     icon: "/assets/my1.png",
   },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
       <body className={`${inter.className} bg-[#0A0A0A] text-white antialiased selection:bg-[#00D4FF]/30`}>
-        <DevIndicatorRemover />
         <AnimatedBackground />
         <CustomCursor />
         <FloatingParticles />
