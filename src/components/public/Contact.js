@@ -13,20 +13,30 @@ import { settings } from "@/data/settings";
 export default function Contact() {
   const s = settings;
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
+  const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      // Send email using mailto link
-      const mailtoLink = `mailto:${s.email}?subject=${encodeURIComponent(formData.subject)}&body=${encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`)}`;
-      window.location.href = mailtoLink;
-      toast.success("Opening email client...");
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, website }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Unable to send your message.");
+      }
+
+      toast.success("Message sent successfully. I'll get back to you soon!");
       setFormData({ name: "", email: "", subject: "", message: "" });
+      setWebsite("");
     } catch (error) {
       console.error(error);
-      toast.error("Failed to open email client. Please try again.");
+      toast.error(error.message || "Failed to send your message. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -128,6 +138,18 @@ export default function Contact() {
           >
             <GlassCard className="!p-8" tilt={false}>
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="absolute -left-[9999px]" aria-hidden="true">
+                  <label htmlFor="contact-website">Website</label>
+                  <input
+                    id="contact-website"
+                    name="website"
+                    type="text"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={website}
+                    onChange={(event) => setWebsite(event.target.value)}
+                  />
+                </div>
                 <div className="grid sm:grid-cols-2 gap-6">
                   <Input label="Your Name" name="name" value={formData.name} onChange={handleChange} required />
                   <Input label="Your Email" type="email" name="email" value={formData.email} onChange={handleChange} required />
@@ -139,7 +161,7 @@ export default function Contact() {
                   disabled={loading} 
                   className="w-full px-8 py-3 bg-gradient-to-r from-cyan-400 to-purple-600 text-white font-medium rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50"
                 >
-                  {loading ? "Sending..." : "Send Message"}
+                  {loading ? "Sending securely..." : "Send Message"}
                 </button>
               </form>
             </GlassCard>

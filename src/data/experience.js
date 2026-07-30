@@ -1,5 +1,14 @@
 export const experience = [
   {
+    id: 3,
+    title: "Software Intern",
+    company: "Vital Masks · Full-time",
+    location: "Jaffna, Northern Province, Sri Lanka · On-site",
+    startDate: "May 2026",
+    endDate: "Present",
+    description: "Currently completing a full-time, on-site software internship at Vital Masks.",
+  },
+  {
     id: 1,
     title: "Freelance Software Developer & Digital Designer",
     company: "Self-Employed",

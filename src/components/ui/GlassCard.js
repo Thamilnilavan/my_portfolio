@@ -97,3 +97,4 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
     </motion.div>
   );
 }
+

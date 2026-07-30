@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HiMenuAlt3, HiX } from "react-icons/hi";
+import { HiMenuAlt3, HiSearch, HiX } from "react-icons/hi";
+import { openCommandPalette } from "../effects/CommandPalette";
 
 const navItems = [
   { name: "Home", href: "#home" },
@@ -87,7 +88,8 @@ export default function Navbar() {
           </motion.button>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-3">
+          <nav className="flex items-center gap-2">
             {navItems.map((item, index) => (
               <motion.button
                 type="button"
@@ -116,6 +118,19 @@ export default function Navbar() {
               </motion.button>
             ))}
           </nav>
+            <motion.button
+              type="button"
+              onClick={openCommandPalette}
+              aria-label="Open quick navigation"
+              className="ml-2 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-gray-400 transition hover:border-[#00D4FF]/30 hover:text-white"
+              whileHover={{ y: -2 }}
+              whileTap={{ scale: 0.96 }}
+            >
+              <HiSearch size={16} />
+              <span>Quick access</span>
+              <kbd className="rounded-md border border-white/10 bg-black/20 px-1.5 py-0.5 text-[10px] text-gray-500">Ctrl K</kbd>
+            </motion.button>
+          </div>
 
           {/* Mobile Toggle */}
           <motion.button
@@ -155,6 +170,16 @@ export default function Navbar() {
               <HiX size={36} />
             </motion.button>
             <nav className="flex flex-col items-center gap-6">
+              <motion.button
+                type="button"
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  openCommandPalette();
+                }}
+                className="mb-2 flex items-center gap-3 rounded-2xl border border-[#00D4FF]/25 bg-[#00D4FF]/10 px-6 py-3 text-sm font-bold uppercase tracking-wider text-[#00D4FF]"
+              >
+                <HiSearch size={20} /> Quick access
+              </motion.button>
               {navItems.map((item, i) => (
                 <motion.button
                   type="button"

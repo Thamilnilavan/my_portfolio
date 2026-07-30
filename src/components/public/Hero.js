@@ -9,6 +9,24 @@ import TextReveal from "../effects/TextReveal";
 import { useTypewriter } from "@/hooks/useTypewriter";
 import { settings } from "@/data/settings";
 
+const outerIconPositions = [
+  { x: 230, y: 0 },
+  { x: 115, y: 199.186 },
+  { x: -115, y: 199.186 },
+  { x: -230, y: 0 },
+  { x: -115, y: -199.186 },
+  { x: 115, y: -199.186 },
+];
+
+const innerIconPositions = [
+  { x: 147.224, y: 85 },
+  { x: 0, y: 170 },
+  { x: -147.224, y: 85 },
+  { x: -147.224, y: -85 },
+  { x: 0, y: -170 },
+  { x: 147.224, y: -85 },
+];
+
 export default function Hero() {
   const s = settings;
   const { scrollY } = useScroll();
@@ -108,7 +126,7 @@ export default function Hero() {
             className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 leading-tight"
           >
             <span className="block text-white">Hi, I&apos;m</span>
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] via-[#7C3AED] to-[#FFD700] glow-text">
+            <span className="block bg-gradient-to-r from-[#67E8F9] via-[#A78BFA] to-[#FDE68A] bg-clip-text text-transparent leading-[1.05]">
               <TextReveal text={s.name} delay={0.4} />
             </span>
           </motion.h1>
@@ -210,10 +228,7 @@ export default function Hero() {
           >
             {/* Floating skill icons - outer circle */}
             {skillIcons.slice(0, 6).map((skill, index) => {
-              const angle = (index / 6) * 2 * Math.PI;
-              const radius = 230;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
+              const { x, y } = outerIconPositions[index];
               return (
                 <motion.div
                   key={`outer-${index}`}
@@ -253,10 +268,7 @@ export default function Hero() {
 
             {/* Floating skill icons - inner circle */}
             {skillIcons.slice(6, 12).map((skill, index) => {
-              const angle = (index / 6) * 2 * Math.PI + Math.PI / 6;
-              const radius = 170;
-              const x = Math.cos(angle) * radius;
-              const y = Math.sin(angle) * radius;
+              const { x, y } = innerIconPositions[index];
               return (
                 <motion.div
                   key={`inner-${index}`}

@@ -9,11 +9,13 @@ import Gallery from "@/components/public/Gallery";
 import Contact from "@/components/public/Contact";
 import Footer from "@/components/public/Footer";
 import SectionTransition from "@/components/effects/SectionTransition";
+import CommandPalette from "@/components/effects/CommandPalette";
 
 export default function Home() {
   return (
     <>
       <Navbar />
+      <CommandPalette />
       
       <main className="flex flex-col min-h-screen">
         <Hero />
