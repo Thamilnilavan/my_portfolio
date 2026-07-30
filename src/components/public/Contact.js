@@ -35,7 +35,6 @@ export default function Contact() {
       setFormData({ name: "", email: "", subject: "", message: "" });
       setWebsite("");
     } catch (error) {
-      console.error(error);
       toast.error(error.message || "Failed to send your message. Please try again.");
     } finally {
       setLoading(false);
@@ -151,11 +150,20 @@ export default function Contact() {
                   />
                 </div>
                 <div className="grid sm:grid-cols-2 gap-6">
-                  <Input label="Your Name" name="name" value={formData.name} onChange={handleChange} required />
+                  <Input label="Your Name" name="name" value={formData.name} onChange={handleChange} minLength={2} required />
                   <Input label="Your Email" type="email" name="email" value={formData.email} onChange={handleChange} required />
                 </div>
-                <Input label="Subject" name="subject" value={formData.subject} onChange={handleChange} required />
-                <Input label="Message" type="textarea" name="message" value={formData.message} onChange={handleChange} required />
+                <Input label="Subject" name="subject" value={formData.subject} onChange={handleChange} minLength={3} required />
+                <Input
+                  label="Message"
+                  type="textarea"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  minLength={10}
+                  placeholder="Tell me about your project or opportunity..."
+                  required
+                />
                 <button 
                   type="submit" 
                   disabled={loading} 

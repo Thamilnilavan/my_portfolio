@@ -1,45 +1,32 @@
 "use client";
-import { useRef, useEffect } from "react";
-import { motion, useInView, useAnimation } from "framer-motion";
+
+import { useRef } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 
 export default function TextReveal({ text, className = "", delay = 0 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-10%" });
-  const controls = useAnimation();
-
-  useEffect(() => {
-    if (isInView) {
-      controls.start("visible");
-    }
-  }, [isInView, controls]);
-
+  const isInView = useInView(ref, { once: true, margin: "-5%" });
+  const reduceMotion = useReducedMotion();
   const words = text.split(" ");
 
   return (
-    <div ref={ref} className={`flex flex-wrap ${className}`}>
-      {words.map((word, i) => (
-        <span key={i} className="overflow-hidden inline-block mr-[0.25em]">
+    <span ref={ref} className={`flex flex-wrap ${className}`}>
+      {words.map((word, index) => (
+        <span key={`${word}-${index}`} className="mr-[0.25em] inline-block overflow-hidden">
           <motion.span
-            className="inline-block"
-            variants={{
-              hidden: { y: "100%", opacity: 0 },
-              visible: { 
-                y: 0, 
-                opacity: 1,
-                transition: { 
-                  duration: 0.5,
-                  ease: [0.33, 1, 0.68, 1],
-                  delay: delay + i * 0.05 
-                }
-              }
+            className="inline-block will-change-transform"
+            initial={reduceMotion ? false : { y: "65%", opacity: 0 }}
+            animate={isInView ? { y: 0, opacity: 1 } : undefined}
+            transition={{
+              duration: 0.55,
+              ease: [0.22, 1, 0.36, 1],
+              delay: reduceMotion ? 0 : delay + Math.min(index * 0.035, 0.35),
             }}
-            initial="hidden"
-            animate={controls}
           >
             {word}
           </motion.span>
         </span>
       ))}
-    </div>
+    </span>
   );
 }

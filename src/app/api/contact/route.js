@@ -34,9 +34,27 @@ export async function POST(request) {
       return Response.json({ success: true });
     }
 
-    if (!name || !EMAIL_PATTERN.test(email) || !subject || message.length < 10) {
+    if (name.length < 2) {
       return Response.json(
-        { error: "Please provide a valid name, email, subject, and message." },
+        { error: "Please enter your name using at least 2 characters." },
+        { status: 400 }
+      );
+    }
+    if (!EMAIL_PATTERN.test(email)) {
+      return Response.json(
+        { error: "Please enter a valid email address." },
+        { status: 400 }
+      );
+    }
+    if (subject.length < 3) {
+      return Response.json(
+        { error: "Please enter a subject using at least 3 characters." },
+        { status: 400 }
+      );
+    }
+    if (message.length < 10) {
+      return Response.json(
+        { error: "Please enter a message using at least 10 characters." },
         { status: 400 }
       );
     }

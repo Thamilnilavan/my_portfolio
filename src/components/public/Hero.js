@@ -127,7 +127,7 @@ export default function Hero() {
           >
             <span className="block text-white">Hi, I&apos;m</span>
             <span className="block bg-gradient-to-r from-[#67E8F9] via-[#A78BFA] to-[#FDE68A] bg-clip-text text-transparent leading-[1.05]">
-              <TextReveal text={s.name} delay={0.4} />
+              {s.name}
             </span>
           </motion.h1>
 

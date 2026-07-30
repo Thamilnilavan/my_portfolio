@@ -7,6 +7,7 @@ import FloatingParticles from "@/components/effects/FloatingParticles";
 import MouseGlow from "@/components/effects/MouseGlow";
 import ScrollProgress from "@/components/effects/ScrollProgress";
 import ServiceWorkerRegister from "@/components/effects/ServiceWorkerRegister";
+import MotionProvider from "@/components/effects/MotionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,25 +24,26 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
       <body className={`${inter.className} bg-[#0A0A0A] text-white antialiased selection:bg-[#00D4FF]/30`}>
-        <AnimatedBackground />
-        <CustomCursor />
-        <FloatingParticles />
-        <MouseGlow />
-        <ScrollProgress />
-        <ServiceWorkerRegister />
-        {children}
-        <Toaster 
-          position="bottom-right"
-          toastOptions={{
-            style: {
-              background: '#0c0c14',
-              color: '#fff',
-              border: '1px solid rgba(255,255,255,0.1)',
-            },
-          }}
-        />
+        <MotionProvider>
+          <AnimatedBackground />
+          <CustomCursor />
+          <FloatingParticles />
+          <MouseGlow />
+          <ScrollProgress />
+          <ServiceWorkerRegister />
+          {children}
+          <Toaster 
+            position="bottom-right"
+            toastOptions={{
+              style: {
+                background: '#0c0c14',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.1)',
+              },
+            }}
+          />
+        </MotionProvider>
       </body>
     </html>
   );
 }
-
