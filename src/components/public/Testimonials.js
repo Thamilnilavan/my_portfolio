@@ -5,9 +5,10 @@ import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import TextReveal from "../effects/TextReveal";
 import { FaStar } from "react-icons/fa";
-import { testimonials } from "@/data/testimonials";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Testimonials() {
+  const { testimonials } = usePortfolioContent();
   const scrollRef = useRef(null);
 
   if (testimonials.length === 0) {

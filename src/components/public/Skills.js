@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import MagneticButton from "../effects/MagneticButton";
-import { skills } from "@/data/skills";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 import {
   FaReact,
@@ -60,6 +60,7 @@ const skillIcons = {
 };
 
 export default function Skills() {
+  const { skills } = usePortfolioContent();
   const [activeCategory, setActiveCategory] = useState("All");
 
   const filteredSkills =

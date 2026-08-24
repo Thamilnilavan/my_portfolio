@@ -8,10 +8,10 @@ import Button from "../ui/Button";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker } from "react-icons/hi";
 import { FaWhatsapp, FaGithub, FaLinkedin, FaTwitter } from "react-icons/fa";
 import toast from "react-hot-toast";
-import { settings } from "@/data/settings";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Contact() {
-  const s = settings;
+  const { settings: s } = usePortfolioContent();
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [website, setWebsite] = useState("");
   const [loading, setLoading] = useState(false);

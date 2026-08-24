@@ -6,9 +6,10 @@ import SectionHeader from "../ui/SectionHeader";
 import Modal from "../ui/Modal";
 import TextReveal from "../effects/TextReveal";
 import { HiOutlineZoomIn } from "react-icons/hi";
-import { gallery } from "@/data/gallery";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Gallery() {
+  const { gallery } = usePortfolioContent();
   const [selectedImage, setSelectedImage] = useState(null);
 
   return (

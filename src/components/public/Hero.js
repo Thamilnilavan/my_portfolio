@@ -7,7 +7,7 @@ import { SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript, SiMongodb, SiGi
 import Button from "../ui/Button";
 import TextReveal from "../effects/TextReveal";
 import { useTypewriter } from "@/hooks/useTypewriter";
-import { settings } from "@/data/settings";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 const outerIconPositions = [
   { x: 230, y: 0 },
@@ -28,7 +28,7 @@ const innerIconPositions = [
 ];
 
 export default function Hero() {
-  const s = settings;
+  const { settings: s } = usePortfolioContent();
   const { scrollY } = useScroll();
   
   const roles = s.typewriterRoles

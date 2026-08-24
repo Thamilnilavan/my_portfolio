@@ -2,10 +2,10 @@
 import { motion } from "framer-motion";
 import { HiArrowUp } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
-import { settings } from "@/data/settings";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Footer() {
-  const s = settings;
+  const { settings: s } = usePortfolioContent();
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };

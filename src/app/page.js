@@ -10,10 +10,14 @@ import Contact from "@/components/public/Contact";
 import Footer from "@/components/public/Footer";
 import SectionTransition from "@/components/effects/SectionTransition";
 import CommandPalette from "@/components/effects/CommandPalette";
+import PortfolioContentProvider from "@/components/providers/PortfolioContentProvider";
+import { getPortfolioContent } from "@/lib/portfolioRepository";
 
-export default function Home() {
+export default async function Home() {
+  const content = await getPortfolioContent();
+
   return (
-    <>
+    <PortfolioContentProvider content={content}>
       <Navbar />
       <CommandPalette />
       
@@ -43,6 +47,6 @@ export default function Home() {
       </main>
 
       <Footer />
-    </>
+    </PortfolioContentProvider>
   );
 }

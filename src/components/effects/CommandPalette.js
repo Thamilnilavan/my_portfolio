@@ -14,8 +14,7 @@ import {
   HiX,
 } from "react-icons/hi";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import { projects } from "@/data/projects";
-import { settings } from "@/data/settings";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 const sectionActions = [
   { label: "Home", detail: "Return to the introduction", icon: HiHome, href: "#home", keywords: "top hero" },
@@ -30,6 +29,7 @@ export function openCommandPalette() {
 }
 
 export default function CommandPalette() {
+  const { projects, settings } = usePortfolioContent();
   const [isOpen, setIsOpen] = useState(false);
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -58,7 +58,7 @@ export default function CommandPalette() {
         ? [{ label: "LinkedIn profile", detail: "Connect professionally", icon: FaLinkedin, href: settings.linkedin, external: true, keywords: "social network" }]
         : []),
     ];
-  }, []);
+  }, [projects, settings]);
 
   const filteredActions = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();

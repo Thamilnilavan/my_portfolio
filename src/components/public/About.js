@@ -4,7 +4,7 @@ import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import TextReveal from "../effects/TextReveal";
 import { HiCode, HiLightningBolt, HiGlobeAlt } from "react-icons/hi";
-import { settings } from "@/data/settings";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 const stats = [
   { label: "Years Experience", value: "1+" },
@@ -32,6 +32,7 @@ const highlights = [
 ];
 
 export default function About() {
+  const { settings } = usePortfolioContent();
   const aboutText = settings.aboutText;
 
   return (

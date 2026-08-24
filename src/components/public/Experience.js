@@ -3,9 +3,10 @@ import { motion } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import Badge from "../ui/Badge";
 import TextReveal from "../effects/TextReveal";
-import { experience } from "@/data/experience";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Experience() {
+  const { experience } = usePortfolioContent();
   return (
     <section id="experience" className="py-24 relative">
       <div className="max-w-4xl mx-auto px-6 relative z-10">

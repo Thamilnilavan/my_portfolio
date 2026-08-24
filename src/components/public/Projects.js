@@ -7,9 +7,10 @@ import GlassCard from "../ui/GlassCard";
 import MagneticButton from "../effects/MagneticButton";
 import TextReveal from "../effects/TextReveal";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
-import { projects } from "@/data/projects";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Projects() {
+  const { projects } = usePortfolioContent();
   const [activeCategory, setActiveCategory] = useState("All");
   const categories = ["All", ...new Set(projects.map((project) => project.category))];
 
@@ -114,4 +115,3 @@ export default function Projects() {
     </section>
   );
 }
-

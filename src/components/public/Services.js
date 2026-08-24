@@ -3,10 +3,11 @@ import { motion } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import TextReveal from "../effects/TextReveal";
-import { services } from "@/data/services";
+import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 import { getServiceIcon } from "@/lib/serviceIcons";
 
 export default function Services() {
+  const { services } = usePortfolioContent();
   return (
     <section id="services" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
