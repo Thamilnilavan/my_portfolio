@@ -46,6 +46,7 @@ export default function Gallery() {
                   width={600}
                   height={450}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  unoptimized={item.src.startsWith("/api/images/")}
                   className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050508]/90 via-[#050508]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
@@ -75,6 +76,7 @@ export default function Gallery() {
                 width={900}
                 height={675}
                 sizes="(max-width: 768px) 100vw, 768px"
+                unoptimized={selectedImage.src.startsWith("/api/images/")}
                 className="w-full h-auto"
               />
             </div>

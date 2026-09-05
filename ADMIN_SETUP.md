@@ -47,3 +47,9 @@ Never commit real values or the one-time admin password.
 
 After importing, the public portfolio reads published records from MongoDB.
 Unpublished records remain visible only inside the admin dashboard.
+
+## Image uploads
+
+Images uploaded from the admin dashboard are stored in the MongoDB `uploads`
+collection and served from `/api/images/<image-id>`. No additional storage
+service is required. On Vercel, each image must be 4 MB or smaller.

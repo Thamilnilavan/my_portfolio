@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
 import { getAdminSession } from "@/lib/adminAuth";
+import { getDatabase } from "@/lib/mongodb";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -32,37 +31,42 @@ export async function POST(request) {
       );
     }
 
-    // Validate file size (max 10MB)
-    const maxSize = 10 * 1024 * 1024;
+    // Vercel Functions accept request bodies up to 4.5 MB. Leave room for
+    // multipart form data so uploads fail predictably before reaching Vercel.
+    const maxSize = 4 * 1024 * 1024;
     if (file.size > maxSize) {
       return NextResponse.json(
-        { error: "File too large. Maximum size: 10MB" },
+        { error: "File too large. Maximum size: 4MB" },
         { status: 400 }
       );
     }
 
-    // Create upload directory
-    const uploadDir = join(process.cwd(), "public", "assets", folder);
-    await mkdir(uploadDir, { recursive: true });
+    const database = await getDatabase();
+    if (!database) {
+      return NextResponse.json(
+        { error: "MongoDB is not configured or could not be reached." },
+        { status: 503 }
+      );
+    }
 
-    // Generate unique filename
-    const timestamp = Date.now();
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const filename = `${timestamp}-${originalName}`;
-    const filepath = join(uploadDir, filename);
-
-    // Convert file to buffer and write
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
-    await writeFile(filepath, buffer);
+    const upload = {
+      folder,
+      filename: originalName || "image",
+      contentType: file.type,
+      size: file.size,
+      data: Buffer.from(bytes),
+      createdAt: new Date(),
+    };
+    const result = await database.collection("uploads").insertOne(upload);
 
-    // Return the public URL
-    const url = `/assets/${folder}/${filename}`;
+    const url = `/api/images/${result.insertedId.toString()}`;
 
     return NextResponse.json({
       success: true,
       url,
-      filename,
+      filename: upload.filename,
       size: file.size,
       type: file.type,
     });

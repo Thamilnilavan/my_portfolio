@@ -339,7 +339,7 @@ export default function Hero() {
                   alt={`${s.name} profile photo`}
                   fill
                   priority
-                  unoptimized={s.profileImage.startsWith("http")}
+                  unoptimized={s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/")}
                   sizes="(max-width: 768px) 224px, 340px"
                   className="w-full h-full object-cover"
                 />
