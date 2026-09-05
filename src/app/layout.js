@@ -23,7 +23,7 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
-      <body className={`${inter.className} bg-[#0A0A0A] text-white antialiased selection:bg-[#00D4FF]/30`}>
+      <body className={`${inter.className} bg-[var(--bg-primary)] text-white antialiased selection:bg-[#00D4FF]/30`}>
         <MotionProvider>
           <AnimatedBackground />
           <CustomCursor />

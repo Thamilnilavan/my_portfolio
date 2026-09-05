@@ -1,61 +1,87 @@
+/**
+ * Compresses an image file on the client side before upload.
+ * Resizes to max 1920px width and compresses to JPEG quality 0.85.
+ * Returns a new File object with the compressed image.
+ */
 export async function compressImage(file, options = {}) {
   const {
     maxWidth = 1920,
     maxHeight = 1080,
-    quality = 0.8,
-    maxSizeMB = 2,
+    quality = 0.85,
+    outputType = "image/jpeg",
   } = options;
 
+  // Skip compression for SVGs and GIFs (they don't compress well with canvas)
+  if (file.type === "image/svg+xml" || file.type === "image/gif") {
+    return file;
+  }
+
+  // Skip if file is already small enough
+  if (file.size < 200 * 1024) {
+    return file;
+  }
+
   return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (event) => {
-      const img = new Image();
-      img.src = event.target.result;
-      img.onload = () => {
-        let width = img.width;
-        let height = img.height;
+    const img = new Image();
+    const url = URL.createObjectURL(file);
 
-        if (width > maxWidth || height > maxHeight) {
-          const ratio = Math.min(maxWidth / width, maxHeight / height);
-          width = Math.round(width * ratio);
-          height = Math.round(height * ratio);
-        }
+    img.onload = () => {
+      URL.revokeObjectURL(url);
 
-        const canvas = document.createElement("canvas");
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
+      let { width, height } = img;
 
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              reject(new Error("Failed to compress image"));
-              return;
-            }
+      // Calculate new dimensions maintaining aspect ratio
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width;
+        width = maxWidth;
+      }
+      if (height > maxHeight) {
+        width = (width * maxHeight) / height;
+        height = maxHeight;
+      }
 
-            const maxSizeBytes = maxSizeMB * 1024 * 1024;
-            if (blob.size > maxSizeBytes) {
-              const compressedFile = new File([blob], file.name, {
-                type: blob.type,
-                lastModified: Date.now(),
-              });
-              resolve(compressedFile);
-            } else {
-              const compressedFile = new File([blob], file.name, {
-                type: blob.type,
-                lastModified: Date.now(),
-              });
-              resolve(compressedFile);
-            }
-          },
-          file.type,
-          quality
-        );
-      };
-      img.onerror = (error) => reject(error);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(width);
+      canvas.height = Math.round(height);
+
+      const ctx = canvas.getContext("2d");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject(new Error("Image compression failed"));
+            return;
+          }
+
+          const compressedFile = new File([blob], file.name, {
+            type: outputType,
+            lastModified: Date.now(),
+          });
+
+          resolve(compressedFile);
+        },
+        outputType,
+        quality
+      );
     };
-    reader.onerror = (error) => reject(error);
+
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Failed to load image for compression"));
+    };
+
+    img.src = url;
   });
+}
+
+/**
+ * Formats bytes to a human readable string.
+ */
+export function formatFileSize(bytes) {
+  if (bytes === 0) return "0 B";
+  const k = 1024;
+  const sizes = ["B", "KB", "MB", "GB"];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
 }

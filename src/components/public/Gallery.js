@@ -43,8 +43,8 @@ export default function Gallery() {
                 <Image
                   src={item.src}
                   alt={item.title}
-                  width={800}
-                  height={600}
+                  width={600}
+                  height={450}
                   sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   className="w-full h-auto object-cover transform transition-transform duration-700 group-hover:scale-110"
                 />
@@ -72,8 +72,8 @@ export default function Gallery() {
               <Image
                 src={selectedImage.src}
                 alt={selectedImage.title}
-                width={1200}
-                height={900}
+                width={900}
+                height={675}
                 sizes="(max-width: 768px) 100vw, 768px"
                 className="w-full h-auto"
               />

@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function AnimatedBackground() {
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[#0A0A0A]">
+    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[var(--bg-primary)]">
       {/* Cinematic Orbs */}
       <motion.div
         className="absolute -top-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full"

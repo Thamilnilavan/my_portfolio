@@ -136,7 +136,7 @@ export default function CommandPalette() {
           <button
             type="button"
             aria-label="Close command palette"
-            className="absolute inset-0 cursor-default bg-[#020205]/80 backdrop-blur-md"
+            className="absolute inset-0 cursor-default bg-black/80 backdrop-blur-md"
             onClick={() => setIsOpen(false)}
           />
 
@@ -148,7 +148,7 @@ export default function CommandPalette() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -12, scale: 0.97 }}
             transition={{ type: "spring", stiffness: 360, damping: 28 }}
-            className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#00D4FF]/25 bg-[#080811]/95 shadow-[0_0_80px_rgba(0,212,255,0.16),0_40px_100px_rgba(0,0,0,0.65)]"
+            className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#00D4FF]/25 bg-[var(--bg-card)]/95 shadow-[0_0_80px_rgba(0,212,255,0.16),0_40px_100px_rgba(0,0,0,0.65)]"
           >
             <div className="flex items-center gap-3 border-b border-white/10 px-5">
               <HiSearch className="shrink-0 text-[#00D4FF]" size={22} />

@@ -17,6 +17,8 @@ import {
   FaPython,
   FaJava,
   FaDatabase,
+  FaFire,
+  FaCode,
 } from "react-icons/fa";
 
 import {
@@ -44,7 +46,6 @@ const skillIcons = {
   "HTML5": FaHtml5,
   "CSS3": FaCss3Alt,
   "JavaScript (ES6+)": SiJavascript,
-  "JavaScript": SiJavascript,
   "TypeScript": SiTypescript,
   "React.js": FaReact,
   "Next.js": SiNextdotjs,
@@ -53,10 +54,12 @@ const skillIcons = {
   "MongoDB": SiMongodb,
   "MySQL": SiMysql,
   "Git & GitHub": FaGithub,
+  "VS Code": FaCode,
   "Postman": SiPostman,
   "Python": FaPython,
   "Java": FaJava,
   "Framer Motion": SiFramer,
+  "Firebase": FaFire,
 };
 
 export default function Skills() {

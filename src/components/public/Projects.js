@@ -59,7 +59,7 @@ export default function Projects() {
               >
                 <GlassCard className="h-full flex flex-col !p-0 group" tilt={false}>
                   {/* Image Area */}
-                  <div className="relative h-56 w-full overflow-hidden bg-[#0c0c14]">
+                  <div className="relative h-56 w-full overflow-hidden bg-[var(--bg-card)]">
                     {project.image ? (
                       <Image
                         src={project.image}

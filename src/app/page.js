@@ -5,6 +5,7 @@ import Skills from "@/components/public/Skills";
 import Projects from "@/components/public/Projects";
 import Experience from "@/components/public/Experience";
 import Services from "@/components/public/Services";
+import Testimonials from "@/components/public/Testimonials";
 import Gallery from "@/components/public/Gallery";
 import Contact from "@/components/public/Contact";
 import Footer from "@/components/public/Footer";
@@ -39,9 +40,12 @@ export default async function Home() {
           <Experience />
         </SectionTransition>
         <SectionTransition delay={0.6}>
-          <Gallery />
+          <Testimonials />
         </SectionTransition>
         <SectionTransition delay={0.7}>
+          <Gallery />
+        </SectionTransition>
+        <SectionTransition delay={0.8}>
           <Contact />
         </SectionTransition>
       </main>

@@ -35,6 +35,12 @@ export const SERVICE_ICON_MAP = {
   HiOutlinePhotograph,
   HiOutlineLightningBolt,
   HiOutlineGlobe,
+  // Legacy keys used by content that was seeded before canonical names.
+  code: HiOutlineCode,
+  design: HiColorSwatch,
+  mobile: HiDeviceMobile,
+  api: HiOutlineCode,
+  web: HiDesktopComputer,
 };
 
 export function getServiceIcon(iconName) {

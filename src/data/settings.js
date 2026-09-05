@@ -1,5 +1,6 @@
 export const settings = {
   name: "Uthayarasa Thamilnilavan",
+  profileImage: "/assets/myimage.png",
   availabilityText: "Available for new opportunities",
   heroBio: "I am a motivated and detail-oriented Software Developer with hands-on experience in full-stack web and mobile application development. I am deeply passionate about building efficient digital solutions and continuous learning.",
   typewriterRoles: "Full-Stack Developer, Mobile Developer, UI/UX Designer",

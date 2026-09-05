@@ -7,7 +7,7 @@ export default function TextReveal({ text, className = "", delay = 0 }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-5%" });
   const reduceMotion = useReducedMotion();
-  const words = text.split(" ");
+  const words = (text || "").split(" ");
 
   return (
     <span ref={ref} className={`flex flex-wrap ${className}`}>

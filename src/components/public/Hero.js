@@ -333,14 +333,21 @@ export default function Hero() {
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 300 }}
             >
-              <Image
-                src="/assets/myimage.png"
-                alt={`${s.name} profile photo`}
-                fill
-                priority
-                sizes="(max-width: 768px) 224px, 340px"
-                className="w-full h-full object-cover"
-              />
+              {s.profileImage ? (
+                <Image
+                  src={s.profileImage}
+                  alt={`${s.name} profile photo`}
+                  fill
+                  priority
+                  unoptimized={s.profileImage.startsWith("http")}
+                  sizes="(max-width: 768px) 224px, 340px"
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-gray-500 bg-gradient-to-br from-cyan-500/20 to-purple-500/20">
+                  {s.name?.charAt(0) || "?"}
+                </div>
+              )}
             </motion.div>
           </motion.div>
         </motion.div>

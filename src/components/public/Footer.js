@@ -18,7 +18,7 @@ export default function Footer() {
   ].filter((item) => item.href);
 
   return (
-    <footer className="relative border-t border-white/10 bg-[#0A0A0A] pt-16 pb-8 overflow-hidden">
+    <footer className="relative border-t border-white/10 bg-[var(--bg-secondary)] pt-16 pb-8 overflow-hidden">
       {/* Decorative top border gradient */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00D4FF] to-transparent opacity-50" />
       

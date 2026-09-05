@@ -17,6 +17,8 @@ import {
   HiX,
 } from "react-icons/hi";
 import { adminFields, adminSections, createEmptyRecord } from "@/content/adminFields";
+import { SERVICE_ICON_MAP, SERVICE_ICON_OPTIONS } from "@/lib/serviceIcons";
+import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
 function recordTitle(section, record) {
   if (section === "settings") return record?.name || "Site settings";
@@ -31,6 +33,20 @@ function recordSubtitle(section, record) {
   if (section === "gallery") return record.category;
   if (section === "testimonials") return record.role;
   return record.email;
+}
+
+function selectOptionsFor(section, key) {
+  if (section === "services" && key === "icon") return SERVICE_ICON_OPTIONS;
+  return [];
+}
+
+function IconPreview({ iconKey }) {
+  const Icon = SERVICE_ICON_MAP[iconKey] || SERVICE_ICON_MAP.HiDesktopComputer;
+  return (
+    <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-cyan-400">
+      <Icon size={20} />
+    </div>
+  );
 }
 
 export default function AdminDashboard({ adminEmail, databaseConfigured }) {
@@ -183,7 +199,7 @@ export default function AdminDashboard({ adminEmail, databaseConfigured }) {
   };
 
   return (
-    <main className="min-h-screen bg-[#050508] text-white">
+    <main className="min-h-screen bg-[var(--bg-primary)] text-white">
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(124,58,237,0.09),transparent_35%),radial-gradient(circle_at_bottom_left,rgba(0,212,255,0.07),transparent_35%)]" />
       <div className="relative mx-auto flex min-h-screen max-w-[1600px]">
         <aside className="hidden w-72 shrink-0 border-r border-white/10 bg-black/15 p-6 lg:flex lg:flex-col">
@@ -308,7 +324,7 @@ function PasswordEditor({ onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 z-[310] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
       <button className="absolute inset-0 cursor-default" onClick={onClose} aria-label="Close password editor" />
-      <form onSubmit={submit} className="relative w-full max-w-lg rounded-t-3xl border border-white/10 bg-[#0b0b13] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
+      <form onSubmit={submit} className="relative w-full max-w-lg rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">Security</p><h2 className="mt-2 text-2xl font-black">Change admin password</h2></div><button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-gray-400 hover:text-white"><HiX /></button></div>
         <p className="mt-3 text-sm leading-6 text-gray-500">Enter your current password, then choose a new password with at least 10 characters.</p>
         {formError && <div role="alert" className="mt-5 rounded-xl border border-red-400/20 bg-red-400/10 p-3 text-sm text-red-300">{formError}</div>}
@@ -322,6 +338,8 @@ function PasswordEditor({ onClose, onSuccess }) {
 }
 
 function RecordEditor({ section, editor, setEditor, setData, onSave, working }) {
+  const [uploading, setUploading] = useState({});
+
   const update = (key, value, type) => {
     let nextValue = value;
     if (type === "number") nextValue = Number(value);
@@ -330,10 +348,43 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
     setData({ ...editor.data, [key]: nextValue });
   };
 
+  const handleFileUpload = async (key, file, folder = "uploads") => {
+    if (!file) return;
+    setUploading((prev) => ({ ...prev, [key]: true }));
+    try {
+      const originalSize = file.size;
+      const compressed = await compressImage(file);
+      const savedBytes = originalSize - compressed.size;
+      const formData = new FormData();
+      formData.append("file", compressed);
+      formData.append("folder", folder);
+      const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "Upload failed");
+      if (savedBytes > 1024) {
+        console.log(`Compressed ${formatFileSize(originalSize)} → ${formatFileSize(compressed.size)} (saved ${formatFileSize(savedBytes)})`);
+      }
+      update(key, result.url, "text");
+    } catch (error) {
+      alert(`Upload failed: ${error.message}`);
+    } finally {
+      setUploading((prev) => ({ ...prev, [key]: false }));
+    }
+  };
+
+  const IMAGE_KEYS = ["profileImage", "image", "avatar", "src"];
+  const isImageField = (key) => IMAGE_KEYS.includes(key);
+  const getImageFolder = (key) => {
+    if (key === "profileImage") return "profile";
+    if (key === "avatar") return "testimonials";
+    if (key === "src") return "gallery";
+    return "projects";
+  };
+
   return (
     <div className="fixed inset-0 z-[300] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
       <button className="absolute inset-0 cursor-default" onClick={() => setEditor(null)} aria-label="Close editor" />
-      <form onSubmit={onSave} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0b0b13] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
+      <form onSubmit={onSave} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">{editor.mode === "create" ? "Create" : "Edit"}</p><h2 className="mt-2 text-2xl font-black">{adminSections[section].singular}</h2></div><button type="button" onClick={() => setEditor(null)} className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-gray-400 hover:text-white"><HiX /></button></div>
         <div className="mt-7 grid gap-5 sm:grid-cols-2">
           {adminFields[section].map(([key, label, type = "text"]) => (
@@ -343,8 +394,33 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
                 <button type="button" role="switch" aria-checked={Boolean(editor.data[key])} onClick={() => update(key, !editor.data[key], type)} className={`flex h-12 w-full items-center justify-between rounded-xl border px-4 ${editor.data[key] ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300" : "border-white/10 bg-white/5 text-gray-500"}`}><span>{editor.data[key] ? "Published" : "Draft"}</span><span className={`h-6 w-11 rounded-full p-1 ${editor.data[key] ? "bg-emerald-400" : "bg-gray-700"}`}><span className={`block h-4 w-4 rounded-full bg-white transition ${editor.data[key] ? "translate-x-5" : ""}`} /></span></button>
               ) : type === "textarea" ? (
                 <textarea required value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} rows={5} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-cyan-400/50" />
+              ) : type === "select" ? (
+                <div className="flex items-center gap-3">
+                  {section === "services" && key === "icon" && <IconPreview iconKey={editor.data[key]} />}
+                  <select value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 flex-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50">
+                    {selectOptionsFor(section, key).map((option) => (
+                      <option key={option.value} value={option.value} className="bg-[#0b0b13]">{option.label}</option>
+                    ))}
+                  </select>
+                </div>
+              ) : isImageField(key) ? (
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <input type="text" required={!['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="/assets/uploads/image.png or https://..." className="h-12 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                    <label className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 hover:text-cyan-300 cursor-pointer transition">
+                      <HiPlus size={20} />
+                      <input type="file" accept="image/*" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleFileUpload(key, file, getImageFolder(key)); event.target.value = ""; }} />
+                    </label>
+                  </div>
+                  {uploading[key] && <p className="text-xs text-cyan-400 animate-pulse">Uploading…</p>}
+                  {editor.data[key] && (
+                    <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-white/10 bg-white/5">
+                      <img src={editor.data[key]} alt="Preview" className="h-full w-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
+                    </div>
+                  )}
+                </div>
               ) : (
-                <input type={type === "array" ? "text" : type} required={!['github','liveUrl','avatar'].includes(key)} value={type === "array" ? (editor.data[key] || []).join(", ") : editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                <input type={type === "array" ? "text" : type} required={!['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={type === "array" ? (editor.data[key] || []).join(", ") : editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
               )}
             </label>
           ))}

@@ -33,9 +33,9 @@ export default function AdminLogin({ configured }) {
   };
 
   return (
-    <main className="min-h-screen bg-[#050508] px-5 py-12 text-white flex items-center justify-center">
+    <main className="min-h-screen bg-[var(--bg-primary)] px-5 py-12 text-white flex items-center justify-center">
       <div className="fixed inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,rgba(0,212,255,0.12),transparent_45%)]" />
-      <section className="relative w-full max-w-md rounded-3xl border border-white/10 bg-[#0b0b13]/90 p-7 shadow-[0_30px_100px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:p-9">
+      <section className="relative w-full max-w-md rounded-3xl border border-white/10 bg-[var(--bg-card)]/90 p-7 shadow-[0_30px_100px_rgba(0,0,0,0.55)] backdrop-blur-xl sm:p-9">
         <div className="mb-8 grid h-14 w-14 place-items-center rounded-2xl bg-gradient-to-br from-cyan-400 to-purple-600 shadow-[0_0_35px_rgba(0,212,255,0.25)]">
           <HiShieldCheck size={28} />
         </div>

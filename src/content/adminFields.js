@@ -11,6 +11,7 @@ export const adminSections = {
 export const adminFields = {
   settings: [
     ["name", "Full name"],
+    ["profileImage", "Profile image URL"],
     ["availabilityText", "Availability"],
     ["heroBio", "Hero biography", "textarea"],
     ["typewriterRoles", "Roles (comma separated)"],
@@ -44,7 +45,7 @@ export const adminFields = {
   ],
   services: [
     ["title", "Title"], ["description", "Description", "textarea"],
-    ["icon", "Icon key"], ["sortOrder", "Display order", "number"],
+    ["icon", "Icon", "select"], ["sortOrder", "Display order", "number"],
     ["isPublished", "Published", "boolean"],
   ],
   gallery: [
@@ -53,8 +54,8 @@ export const adminFields = {
   ],
   testimonials: [
     ["name", "Name"], ["role", "Role"], ["content", "Testimonial", "textarea"],
-    ["avatar", "Avatar URL"], ["sortOrder", "Display order", "number"],
-    ["isPublished", "Published", "boolean"],
+    ["rating", "Star Rating", "number"], ["avatar", "Avatar URL"],
+    ["sortOrder", "Display order", "number"], ["isPublished", "Published", "boolean"],
   ],
 };
 

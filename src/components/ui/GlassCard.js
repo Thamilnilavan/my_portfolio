@@ -6,7 +6,7 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
   const ref = useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [mousePosition, setMousePosition] = useState({ x: 50, y: 50 });
   const [isHovered, setIsHovered] = useState(false);
 
   const handleMouseMove = (e) => {
@@ -23,10 +23,9 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
   };
 
   const handleMouseLeave = () => {
-    if (!tilt) return;
     setRotateX(0);
     setRotateY(0);
-    setMousePosition({ x: 0, y: 0 });
+    setMousePosition({ x: 50, y: 50 });
     setIsHovered(false);
   };
 
@@ -40,53 +39,50 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       onMouseEnter={handleMouseEnter}
-      animate={{ rotateX, rotateY, scale: isHovered ? 1.02 : 1 }}
+      animate={{ rotateX: tilt ? rotateX : 0, rotateY: tilt ? rotateY : 0, scale: isHovered ? 1.02 : 1 }}
       transition={{ type: "spring", stiffness: 300, damping: 20 }}
       style={{ perspective: 1000, transformStyle: "preserve-3d" }}
       className={`glass relative overflow-hidden rounded-3xl p-6 transition-all duration-500 hover:bg-[var(--bg-card-hover)] hover:border-[#00D4FF]/40 group ${className}`}
       {...props}
     >
       {/* Dynamic glow effect that follows mouse */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(0, 212, 255, 0.2) 0%, transparent 60%)`,
-          opacity: isHovered ? 1 : 0
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(circle at ${mousePosition.x}% ${mousePosition.y}%, rgba(0, 212, 255, 0.2) 0%, transparent 60%)`
         }}
         transition={{ duration: 0.3 }}
       />
       {/* Secondary glow */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at ${100-mousePosition.x}% ${100-mousePosition.y}%, rgba(124, 58, 237, 0.15) 0%, transparent 60%)`,
-          opacity: isHovered ? 1 : 0
+        animate={{
+          opacity: isHovered ? 1 : 0,
+          background: `radial-gradient(circle at ${100 - mousePosition.x}% ${100 - mousePosition.y}%, rgba(124, 58, 237, 0.15) 0%, transparent 60%)`
         }}
         transition={{ duration: 0.4 }}
       />
       {/* Top gradient overlay */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 bg-gradient-to-br from-white/8 to-transparent pointer-events-none"
-        initial={{ opacity: 0 }}
         animate={{ opacity: isHovered ? 1 : 0 }}
         transition={{ duration: 0.3 }}
       />
       {/* Animated border glow */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 rounded-3xl pointer-events-none"
-        initial={{ opacity: 0 }}
-        animate={{ 
+        animate={{
           opacity: isHovered ? 1 : 0,
-          boxShadow: isHovered 
-            ? `inset 0 0 30px rgba(0, 212, 255, 0.15), inset 0 0 60px rgba(124, 58, 237, 0.1), 0 0 30px rgba(0, 212, 255, 0.2)` 
+          boxShadow: isHovered
+            ? "inset 0 0 30px rgba(0, 212, 255, 0.15), inset 0 0 60px rgba(124, 58, 237, 0.1), 0 0 30px rgba(0, 212, 255, 0.2)"
             : "none"
         }}
         transition={{ duration: 0.4 }}
       />
       {/* Shimmer effect */}
-      <motion.div 
+      <motion.div
         className="absolute inset-0 pointer-events-none"
-        initial={{ x: "-100%" }}
         animate={{ x: isHovered ? "100%" : "-100%" }}
         transition={{ duration: 0.8, ease: "easeInOut" }}
         style={{
@@ -97,4 +93,3 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
     </motion.div>
   );
 }
-

@@ -13,6 +13,15 @@ const stats = [
   { label: "Technologies", value: "20+" },
 ];
 
+function deriveStats(projects, skills, testimonials) {
+  return [
+    { label: "Years Experience", value: "1+" },
+    { label: "Projects Completed", value: `${projects.length || 5}+` },
+    { label: "Happy Clients", value: `${testimonials.length || 3}+` },
+    { label: "Technologies", value: `${skills.length || 20}+` },
+  ];
+}
+
 const highlights = [
   {
     icon: HiCode,
@@ -32,8 +41,9 @@ const highlights = [
 ];
 
 export default function About() {
-  const { settings } = usePortfolioContent();
+  const { settings, projects, skills, testimonials } = usePortfolioContent();
   const aboutText = settings.aboutText;
+  const computedStats = deriveStats(projects, skills, testimonials);
 
   return (
     <section id="about" className="py-24 relative">
@@ -62,7 +72,7 @@ export default function About() {
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {stats.map((stat, i) => (
+              {computedStats.map((stat, i) => (
                 <motion.div
                   key={stat.label}
                   initial={{ opacity: 0, y: 20 }}
