@@ -14,6 +14,10 @@ import CommandPalette from "@/components/effects/CommandPalette";
 import PortfolioContentProvider from "@/components/providers/PortfolioContentProvider";
 import { getPortfolioContent } from "@/lib/portfolioRepository";
 
+// Portfolio content is changed from the admin dashboard and must be fetched
+// from MongoDB for every request instead of being fixed at deployment time.
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const content = await getPortfolioContent();
 

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { revalidatePath } from "next/cache";
 import { getAdminSession } from "@/lib/adminAuth";
 import { getDatabase, isMongoConfigured } from "@/lib/mongodb";
 import { localPortfolioContent } from "@/content/localPortfolioContent";
@@ -18,6 +19,10 @@ const COLLECTIONS = [
 
 async function authorized() {
   return Boolean(await getAdminSession());
+}
+
+function refreshPublicPortfolio() {
+  revalidatePath("/");
 }
 
 function validCollection(name) {
@@ -98,6 +103,7 @@ export async function POST(request) {
         await collection.insertMany(records);
       }
     }
+    refreshPublicPortfolio();
     return Response.json({ success: true, content: await readAll(database) });
   }
 
@@ -120,6 +126,7 @@ export async function POST(request) {
     { $set: record },
     { upsert: true }
   );
+  refreshPublicPortfolio();
   return Response.json({ success: true, record });
 }
 
@@ -148,6 +155,7 @@ export async function PUT(request) {
     { $set: record },
     { upsert: body.collection === "settings" }
   );
+  refreshPublicPortfolio();
   return Response.json({ success: true, record });
 }
 
@@ -166,5 +174,6 @@ export async function DELETE(request) {
   }
 
   await database.collection(body.collection).deleteOne({ id: String(body.id) });
+  refreshPublicPortfolio();
   return Response.json({ success: true });
 }
