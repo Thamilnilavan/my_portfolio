@@ -53,3 +53,11 @@ Unpublished records remain visible only inside the admin dashboard.
 Images uploaded from the admin dashboard are stored in the MongoDB `uploads`
 collection and served from `/api/images/<image-id>`. No additional storage
 service is required. On Vercel, each image must be 4 MB or smaller.
+
+## CV uploads
+
+In **Site settings**, choose a PDF from your device using **Upload CV PDF**.
+Wait for the upload, use **View CV** to check it, then click **Save changes**.
+PDFs must be 4 MB or smaller. CVs use the same persistent MongoDB storage as
+images, so they remain available after deployments. Each upload gets a new URL
+to prevent browsers from showing a cached version of an older CV.

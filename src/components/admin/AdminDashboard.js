@@ -353,13 +353,20 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
     setUploading((prev) => ({ ...prev, [key]: true }));
     try {
       const originalSize = file.size;
-      const compressed = await compressImage(file);
+      if (key === "cvUrl" && !/\.pdf$/i.test(file.name)) {
+        throw new Error("Please select a PDF file.");
+      }
+      const compressed = key === "cvUrl" ? file : await compressImage(file);
+      if (compressed.size > 4 * 1024 * 1024) {
+        throw new Error("File too large. Maximum size: 4MB");
+      }
       const savedBytes = originalSize - compressed.size;
       const formData = new FormData();
       formData.append("file", compressed);
       formData.append("folder", folder);
       const response = await fetch("/api/admin/upload", { method: "POST", body: formData });
-      const result = await response.json();
+      const result = await response.json().catch(() => ({}));
+      if (response.status === 413) throw new Error("File too large. Maximum size: 4MB");
       if (!response.ok) throw new Error(result.error || "Upload failed");
       if (savedBytes > 1024) {
         console.log(`Compressed ${formatFileSize(originalSize)} → ${formatFileSize(compressed.size)} (saved ${formatFileSize(savedBytes)})`);
@@ -384,7 +391,10 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
   return (
     <div className="fixed inset-0 z-[300] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
       <button className="absolute inset-0 cursor-default" onClick={() => setEditor(null)} aria-label="Close editor" />
-      <form onSubmit={onSave} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
+      <form onSubmit={(event) => {
+        if (Object.values(uploading).some(Boolean)) { event.preventDefault(); return; }
+        onSave(event);
+      }} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">{editor.mode === "create" ? "Create" : "Edit"}</p><h2 className="mt-2 text-2xl font-black">{adminSections[section].singular}</h2></div><button type="button" onClick={() => setEditor(null)} className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-gray-400 hover:text-white"><HiX /></button></div>
         <div className="mt-7 grid gap-5 sm:grid-cols-2">
           {adminFields[section].map(([key, label, type = "text"]) => (
@@ -402,6 +412,13 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
                       <option key={option.value} value={option.value} className="bg-[#0b0b13]">{option.label}</option>
                     ))}
                   </select>
+                </div>
+              ) : key === "cvUrl" ? (
+                <div className="space-y-3">
+                  <input type="text" required value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="Upload a PDF or enter a CV URL" className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                  <input type="file" aria-label="Upload CV PDF" accept=".pdf,application/pdf" disabled={uploading[key]} onChange={(event) => { const file = event.target.files?.[0]; if (file) handleFileUpload(key, file, "cv"); event.target.value = ""; }} className="block w-full text-sm text-gray-400 file:mr-3 file:cursor-pointer file:rounded-xl file:border-0 file:bg-cyan-400/10 file:px-4 file:py-3 file:font-semibold file:text-cyan-300 disabled:opacity-50" />
+                  <p className="text-xs text-gray-400" role="status">{uploading[key] ? "Uploading CV…" : "PDF, up to 4 MB. Save changes after uploading."}</p>
+                  {editor.data[key] && <a href={editor.data[key]} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-cyan-300 hover:underline">View CV</a>}
                 </div>
               ) : isImageField(key) ? (
                 <div className="space-y-3">
@@ -425,7 +442,7 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
             </label>
           ))}
         </div>
-        <div className="mt-8 flex justify-end gap-3 border-t border-white/10 pt-6"><button type="button" onClick={() => setEditor(null)} className="rounded-xl border border-white/10 px-5 py-3 text-sm font-bold text-gray-400 hover:text-white">Cancel</button><button disabled={working} className="rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 px-6 py-3 text-sm font-bold disabled:opacity-50">{working ? "Saving…" : "Save changes"}</button></div>
+        <div className="mt-8 flex justify-end gap-3 border-t border-white/10 pt-6"><button type="button" onClick={() => setEditor(null)} className="rounded-xl border border-white/10 px-5 py-3 text-sm font-bold text-gray-400 hover:text-white">Cancel</button><button disabled={working || Object.values(uploading).some(Boolean)} className="rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 px-6 py-3 text-sm font-bold disabled:opacity-50">{working ? "Saving…" : "Save changes"}</button></div>
       </form>
     </div>
   );

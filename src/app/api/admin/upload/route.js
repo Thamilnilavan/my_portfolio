@@ -15,18 +15,22 @@ export async function POST(request) {
     const formData = await request.formData();
     const file = formData.get("file");
     const requestedFolder = formData.get("folder") || "uploads";
-    const ALLOWED_FOLDERS = ["uploads", "profile", "testimonials", "gallery", "projects"];
+    const ALLOWED_FOLDERS = ["uploads", "profile", "testimonials", "gallery", "projects", "cv"];
     const folder = ALLOWED_FOLDERS.includes(requestedFolder) ? requestedFolder : "uploads";
 
-    if (!file) {
+    if (!file || typeof file === "string" || !file.size) {
       return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
 
     // Validate file type
     const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp", "image/svg+xml"];
-    if (!allowedTypes.includes(file.type)) {
+    const isCv = folder === "cv";
+    const validType = isCv
+      ? /\.pdf$/i.test(file.name) && ["", "application/pdf", "application/octet-stream"].includes(file.type)
+      : allowedTypes.includes(file.type);
+    if (!validType) {
       return NextResponse.json(
-        { error: "Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG" },
+        { error: isCv ? "Please upload your CV as a PDF." : "Invalid file type. Allowed: JPEG, PNG, GIF, WebP, SVG" },
         { status: 400 }
       );
     }
@@ -41,6 +45,11 @@ export async function POST(request) {
       );
     }
 
+    const bytes = Buffer.from(await file.arrayBuffer());
+    if (isCv && bytes.subarray(0, 5).toString() !== "%PDF-") {
+      return NextResponse.json({ error: "The selected file is not a valid PDF." }, { status: 400 });
+    }
+
     const database = await getDatabase();
     if (!database) {
       return NextResponse.json(
@@ -50,13 +59,12 @@ export async function POST(request) {
     }
 
     const originalName = file.name.replace(/[^a-zA-Z0-9.-]/g, "_");
-    const bytes = await file.arrayBuffer();
     const upload = {
       folder,
       filename: originalName || "image",
-      contentType: file.type,
+      contentType: isCv ? "application/pdf" : file.type,
       size: file.size,
-      data: Buffer.from(bytes),
+      data: bytes,
       createdAt: new Date(),
     };
     const result = await database.collection("uploads").insertOne(upload);
@@ -68,7 +76,7 @@ export async function POST(request) {
       url,
       filename: upload.filename,
       size: file.size,
-      type: file.type,
+      type: upload.contentType,
     });
   } catch (error) {
     console.error("Upload error:", error);

@@ -17,7 +17,7 @@ export async function GET(_request, { params }) {
 
   const image = await database.collection("uploads").findOne(
     { _id: new ObjectId(id) },
-    { projection: { data: 1, contentType: 1, size: 1 } }
+    { projection: { data: 1, contentType: 1, size: 1, filename: 1 } }
   );
   if (!image?.data) {
     return new Response("Image not found", { status: 404 });
@@ -36,7 +36,10 @@ export async function GET(_request, { params }) {
     headers: {
       "Content-Type": image.contentType || "application/octet-stream",
       "Content-Length": String(bytes.length),
-      "Content-Disposition": "inline",
+      "Content-Disposition": image.contentType === "application/pdf"
+        ? `inline; filename="${(image.filename || "CV.pdf").replace(/[^a-zA-Z0-9._-]/g, "_")}"`
+        : "inline",
+      "X-Content-Type-Options": "nosniff",
       "Cache-Control": "public, max-age=31536000, immutable",
     },
   });
