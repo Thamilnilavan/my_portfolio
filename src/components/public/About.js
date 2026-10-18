@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { getAboutSettings } from "@/content/aboutSettings";
 import { animate, motion, useInView, useReducedMotion } from "framer-motion";
@@ -65,6 +66,18 @@ export default function About() {
             {roles.map((role, index) => <span key={role} className="inline-flex items-center gap-2 text-xs font-medium text-gray-300 sm:text-sm"><span aria-hidden="true" className={`h-1 w-1 rounded-full ${index % 2 ? "bg-violet-400" : "bg-cyan-300"}`} />{role}</span>)}
           </motion.div>
         </header>
+
+        {about.aboutShowPhoto && about.aboutImage && <motion.figure {...reveal(0.15)} className="relative mx-auto mt-8 w-full max-w-[320px] px-3 pb-3 pt-3 lg:hidden">
+          <div aria-hidden="true" className="absolute inset-1 rotate-[-4deg] rounded-[32px] border border-violet-300/25 bg-gradient-to-br from-violet-400/10 to-cyan-300/5" />
+          <div className="relative overflow-hidden rounded-[28px] border border-cyan-300/20 bg-[#0b101b] shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
+            <div className="relative aspect-[4/5]">
+              <Image src={about.aboutImage} alt={`${settings.name || "Developer"} portrait`} fill sizes="(max-width: 1023px) 296px, 1px" unoptimized={about.aboutImage.startsWith("http") || about.aboutImage.startsWith("/api/images/")} className="object-cover object-top" />
+              <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080d18] via-transparent to-transparent" />
+              <span aria-hidden="true" className="absolute left-4 top-4 h-6 w-6 border-l border-t border-cyan-200/60" /><span aria-hidden="true" className="absolute bottom-4 right-4 h-6 w-6 border-b border-r border-violet-200/60" />
+            </div>
+            <figcaption className="relative -mt-9 px-5 pb-5"><p className="text-[10px] uppercase tracking-[0.2em] text-cyan-200">{about.aboutPhotoCaption}</p><p className="mt-2 break-words text-lg font-semibold tracking-tight text-white">{settings.name}</p></figcaption>
+          </div>
+        </motion.figure>}
 
         <div className={`mt-9 grid items-center gap-8 border-y border-white/10 py-7 sm:mt-12 sm:py-9 ${about.aboutShowStats ? "lg:grid-cols-[1.25fr_1fr] lg:gap-16" : ""}`}>
           <motion.div {...reveal(0.15)} className="min-w-0">

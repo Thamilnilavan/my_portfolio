@@ -121,7 +121,6 @@ export default function Hero() {
             <span className="text-xs sm:text-sm font-semibold text-gray-200">{s.availabilityText}</span>
           </motion.div>
 
-          {s.profileImage && <div className="relative mb-6 h-28 w-28 rounded-full border border-cyan-300/30 p-2 shadow-[0_0_30px_rgba(124,58,237,0.15)] lg:hidden"><div className="relative h-full w-full overflow-hidden rounded-full border border-violet-300/25"><Image src={s.profileImage} alt={`${s.name} profile photo`} fill sizes="96px" unoptimized={s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/")} className="object-cover" /></div></div>}
           <motion.h1 
             initial={false}
             animate={{ opacity: 1, y: 0 }}

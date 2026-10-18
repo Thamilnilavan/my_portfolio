@@ -3,6 +3,7 @@ export const aboutDefaults = {
   aboutHeading: "A curious mind.",
   aboutHeadingAccent: "A passion for building.",
   aboutImage: "",
+  aboutShowPhoto: true,
   aboutPhotoCaption: "the person behind the pixels",
   aboutTagline: "Always learning. Always building.",
   aboutRoles: null,
