@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { HiMenuAlt3, HiSearch, HiX } from "react-icons/hi";
 import { openCommandPalette } from "../effects/CommandPalette";
@@ -18,6 +18,28 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
+  const menuButton = useRef(null);
+  const closeButton = useRef(null);
+  const menuPanel = useRef(null);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButton.current?.focus();
+    const onKey = event => {
+      if (event.key === "Escape") { setMobileMenuOpen(false); menuButton.current?.focus(); }
+      if (event.key !== "Tab") return;
+      const items = [...(menuPanel.current?.querySelectorAll("button") || [])];
+      const first = items[0], last = items.at(-1);
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+      if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+    };
+    const onResize = () => { if (window.innerWidth >= 1024) setMobileMenuOpen(false); };
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onResize);
+    return () => { document.body.style.overflow = previous; document.removeEventListener("keydown", onKey); window.removeEventListener("resize", onResize); };
+  }, [mobileMenuOpen]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -70,7 +92,7 @@ export default function Navbar() {
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
           scrolled
             ? "py-3 bg-[#050508]/95 backdrop-blur-2xl border-b border-[#00D4FF]/30 shadow-[0_0_40px_rgba(0,212,255,0.15)]"
-            : "py-6 bg-transparent"
+            : "py-4 sm:py-6 bg-transparent"
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
@@ -140,6 +162,8 @@ export default function Navbar() {
           {/* Mobile Toggle */}
           <motion.button
             type="button"
+            ref={menuButton}
+            aria-controls="mobile-navigation"
             aria-label="Open navigation menu"
             aria-expanded={mobileMenuOpen}
             className="lg:hidden text-gray-300 p-3 hover:text-[#00D4FF] transition-colors rounded-xl hover:bg-white/5"
@@ -161,10 +185,12 @@ export default function Navbar() {
             animate={{ opacity: 1, x: 0 }}
             exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: "100%" }}
             transition={{ type: "spring", bounce: 0, duration: 0.5 }}
+            id="mobile-navigation" ref={menuPanel} role="dialog" aria-modal="true" aria-label="Navigation menu"
             className="fixed inset-0 z-50 bg-[#050508]/98 backdrop-blur-2xl flex flex-col items-center justify-center overflow-y-auto py-16"
           >
             <motion.button
               type="button"
+              ref={closeButton}
               aria-label="Close navigation menu"
               className="absolute top-6 right-6 text-gray-300 p-3 hover:text-[#00D4FF] transition-colors rounded-xl hover:bg-white/5"
               onClick={() => setMobileMenuOpen(false)}

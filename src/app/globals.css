@@ -343,3 +343,11 @@ main p { line-height: 1.65; }
 .portfolio-ui[data-headings="large"] h2 { font-size: clamp(2.25rem, 5vw, 4.5rem); }
 .portfolio-ui[data-font="system"] { font-family: system-ui, sans-serif; }
 .portfolio-ui[data-font="mono"] { font-family: var(--font-mono), monospace; }
+
+@media (max-width: 1023px) {
+  .hero-copy { transform: none !important; }
+}
+@media (max-width: 639px) {
+  .portfolio-ui h2 { overflow-wrap: anywhere; }
+  .portfolio-ui input, .portfolio-ui textarea { font-size: 16px; }
+}

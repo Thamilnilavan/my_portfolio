@@ -102,13 +102,13 @@ export default function Hero() {
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full grid lg:grid-cols-2 gap-12 items-center">
         <motion.div 
           style={reduceMotion ? undefined : { y: yText }}
-          className="min-w-0 text-left"
+          className="hero-copy min-w-0 text-left"
         >
           <motion.div
             initial={false}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, type: "spring" }}
-            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-[#00D4FF]/40 mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(0,212,255,0.2)]"
+            className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-[#00D4FF]/40 mb-5 sm:mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(0,212,255,0.2)]"
           >
             <motion.span 
               className="w-2.5 h-2.5 rounded-full bg-[#00D4FF] shadow-[0_0_15px_#00D4FF]"
@@ -118,14 +118,15 @@ export default function Hero() {
               }}
               transition={{ duration: 2, repeat: Infinity }}
             />
-            <span className="text-sm font-semibold text-gray-200">{s.availabilityText}</span>
+            <span className="text-xs sm:text-sm font-semibold text-gray-200">{s.availabilityText}</span>
           </motion.div>
 
+          {s.profileImage && <div className="relative mb-6 h-28 w-28 rounded-full border border-cyan-300/30 p-2 shadow-[0_0_30px_rgba(124,58,237,0.15)] lg:hidden"><div className="relative h-full w-full overflow-hidden rounded-full border border-violet-300/25"><Image src={s.profileImage} alt={`${s.name} profile photo`} fill sizes="96px" unoptimized={s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/")} className="object-cover" /></div></div>}
           <motion.h1 
             initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
-            className="text-4xl sm:text-5xl lg:text-[64px] font-extrabold tracking-[-0.04em] mb-6 leading-tight"
+            className="text-[clamp(2rem,8.5vw,2.5rem)] sm:text-5xl lg:text-[64px] font-extrabold tracking-[-0.04em] mb-6 leading-tight"
           >
             <span className="mb-3 block text-2xl font-medium tracking-normal text-gray-200">Hi, I&apos;m</span>
             <span className="block bg-gradient-to-r from-[#67E8F9] via-[#A78BFA] to-[#FDE68A] bg-clip-text text-transparent leading-[1.08] [overflow-wrap:anywhere]">
@@ -162,7 +163,7 @@ export default function Hero() {
             initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-wrap items-center gap-3 [&_button]:px-5 [&_button]:text-sm"
+            className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 [&_button]:w-full sm:[&_button]:w-auto [&_button]:px-3 sm:[&_button]:px-5 [&_button]:text-xs sm:[&_button]:text-sm"
           >
             <Button 
               variant="gradient"
@@ -183,7 +184,7 @@ export default function Hero() {
                 href={s.cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-semibold glass text-white hover:bg-white/15 hover:border-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-105"
+                className="col-span-2 relative inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-semibold glass text-white hover:bg-white/15 hover:border-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-105"
               >
                 <HiOutlineDownload className="text-xl" /> Download CV
               </a>
@@ -195,7 +196,7 @@ export default function Hero() {
               initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="flex items-center gap-5 mt-8"
+              className="flex flex-wrap items-center gap-3 sm:gap-5 mt-6 sm:mt-8"
             >
               {socials.map(({ Icon, href }, i) => (
                 <motion.a
@@ -211,7 +212,7 @@ export default function Hero() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: 1.2 + i * 0.1, type: "spring", stiffness: 400 }}
                 >
-                  <Icon size={28} />
+                  <Icon size={22} />
                 </motion.a>
               ))}
             </motion.div>
@@ -220,10 +221,10 @@ export default function Hero() {
 
         <motion.div 
           style={reduceMotion ? undefined : { y: yProfile, rotate: rotateProfile }}
-          className="relative hidden lg:flex justify-center items-center h-full"
+          className="relative hidden min-w-0 lg:flex justify-center items-center h-full"
         >
           <motion.div
-            className="relative w-96 h-96 md:w-[500px] md:h-[500px] rounded-full"
+            className="relative h-[500px] w-[500px] shrink-0 scale-[0.78] xl:scale-95 2xl:scale-100 rounded-full"
             initial={false}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, delay: 0.2, type: "spring" }}

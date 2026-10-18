@@ -91,7 +91,7 @@ export default function Contact() {
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-cyan-300">{content.contactEyebrow}</p>
             <span aria-hidden="true" className="h-px w-10 bg-gradient-to-l from-transparent to-violet-400" />
           </motion.div>
-          <h2 id="contact-heading" className="text-3xl font-bold leading-[1.12] tracking-[-0.045em] text-white sm:text-5xl lg:text-[64px]">
+          <h2 aria-label={`${content.contactHeading} ${content.contactHeadingAccent}`} id="contact-heading" className="text-3xl font-bold leading-[1.12] tracking-[-0.045em] text-white sm:text-5xl lg:text-[64px]">
             <span className="sr-only">{content.contactHeading} {content.contactHeadingAccent}</span>
             <span className="block"><ContactReveal text={content.contactHeading} delay={0.1} reducedMotion={reduceMotion} /></span>
             <span className="block"><ContactReveal text={content.contactHeadingAccent} gradient delay={0.18} reducedMotion={reduceMotion} /></span>
