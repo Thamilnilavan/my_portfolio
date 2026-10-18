@@ -2,7 +2,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function GlassCard({ children, className = "", tilt = true, ...props }) {
+export default function GlassCard({ children, className = "", contentClassName = "", tilt = true, ...props }) {
   const ref = useRef(null);
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
@@ -89,7 +89,7 @@ export default function GlassCard({ children, className = "", tilt = true, ...pr
           background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)"
         }}
       />
-      <div className="relative z-10 h-full" style={{ transformStyle: "preserve-3d" }}>{children}</div>
+      <div className={`relative z-10 h-full ${contentClassName}`} style={{ transformStyle: "preserve-3d" }}>{children}</div>
     </motion.div>
   );
 }

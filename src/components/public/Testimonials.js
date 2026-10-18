@@ -1,5 +1,5 @@
 "use client";
-import { useRef } from "react";
+
 import { motion } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
@@ -8,46 +8,31 @@ import { FaStar } from "react-icons/fa";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Testimonials() {
-  const { testimonials } = usePortfolioContent();
-  const scrollRef = useRef(null);
+  const { testimonials: records } = usePortfolioContent();
+  const testimonials = records.filter(item => !["john doe", "jane smith", "mike johnson"].includes(item.name?.trim().toLowerCase()));
 
-  if (testimonials.length === 0) {
-    return (
-      <section id="testimonials" className="py-24 relative">
-        <div className="max-w-7xl mx-auto px-6">
-          <SectionHeader subtitle="Client Reviews" title="What People Say" />
-          <p className="text-center text-gray-500">No testimonials yet.</p>
-        </div>
-      </section>
-    );
-  }
-
-  const duplicatedTestimonials = [...testimonials, ...testimonials];
+  if (testimonials.length === 0) return null;
 
   return (
     <section id="testimonials" className="py-24 relative overflow-hidden">
       <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-cyan-500/5 rounded-full blur-[120px] -translate-y-1/2 -z-10" />
 
-      <div className="max-w-7xl mx-auto px-6 relative z-10 mb-10">
-        <SectionHeader subtitle="Client Reviews" title="What People Say" className="!mb-10" />
+      <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <SectionHeader subtitle="Client Reviews" title="What People Say" className="!mb-6" />
       </div>
 
-      <div className="relative w-full flex overflow-x-hidden group">
+      <div className="mx-auto max-w-7xl px-6">
         <motion.div
-          ref={scrollRef}
-          className="flex gap-6 px-6"
-          animate={{ x: ["0%", "-50%"] }}
-          transition={{ duration: 30, ease: "linear", repeat: Infinity }}
-          style={{ width: "fit-content" }}
+          className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
         >
-          {duplicatedTestimonials.map((testimonial, i) => (
-            <GlassCard key={`${testimonial.id}-${i}`} className="w-[300px] flex-shrink-0 !p-6">
+          {testimonials.map((testimonial, i) => (
+            <GlassCard key={`${testimonial.id}-${i}`} className="h-full !p-6">
               <div className="flex gap-1 mb-4 text-amber-400">
                 {[...Array(5)].map((_, idx) => (
                   <FaStar key={idx} size={14} className={idx < (testimonial.rating ?? 5) ? "" : "text-gray-600"} />
                 ))}
               </div>
-              <div className="text-gray-300 italic mb-6 text-sm leading-relaxed">
+              <div className="text-gray-300 italic mb-6 text-base leading-relaxed">
                 &ldquo;<TextReveal text={testimonial.content} delay={i * 0.05} />&rdquo;
               </div>
               <div className="flex items-center gap-3">

@@ -1,3 +1,5 @@
+import CinematicText from "@/components/effects/CinematicText";
+import PortfolioAppearance from "@/components/providers/PortfolioAppearance";
 import Navbar from "@/components/public/Navbar";
 import Hero from "@/components/public/Hero";
 import About from "@/components/public/About";
@@ -5,7 +7,7 @@ import Skills from "@/components/public/Skills";
 import Projects from "@/components/public/Projects";
 import Experience from "@/components/public/Experience";
 import Services from "@/components/public/Services";
-import Testimonials from "@/components/public/Testimonials";
+import BuildingArcStack from "@/components/public/BuildingArcStack";
 import Gallery from "@/components/public/Gallery";
 import Contact from "@/components/public/Contact";
 import Footer from "@/components/public/Footer";
@@ -23,9 +25,11 @@ export default async function Home() {
 
   return (
     <PortfolioContentProvider content={content}>
+      <CinematicText />
       <Navbar />
       <CommandPalette />
       
+      <PortfolioAppearance>
       <main className="flex flex-col min-h-screen">
         <Hero />
         <SectionTransition delay={0.1}>
@@ -44,7 +48,7 @@ export default async function Home() {
           <Experience />
         </SectionTransition>
         <SectionTransition delay={0.6}>
-          <Testimonials />
+          <BuildingArcStack />
         </SectionTransition>
         <SectionTransition delay={0.7}>
           <Gallery />
@@ -53,6 +57,7 @@ export default async function Home() {
           <Contact />
         </SectionTransition>
       </main>
+      </PortfolioAppearance>
 
       <Footer />
     </PortfolioContentProvider>

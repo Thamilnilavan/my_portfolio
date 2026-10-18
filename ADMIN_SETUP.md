@@ -61,3 +61,16 @@ Wait for the upload, use **View CV** to check it, then click **Save changes**.
 PDFs must be 4 MB or smaller. CVs use the same persistent MongoDB storage as
 images, so they remain available after deployments. Each upload gets a new URL
 to prevent browsers from showing a cached version of an older CV.
+
+## Public page customization
+
+Open **Site settings → Edit** and select a category:
+
+- **Site details:** profile photo uploads, biography, CV upload, contact details and social links.
+- **About Me:** both heading lines, tagline, roles, full biography, button labels and feature highlights. Counts use published projects and skills.
+- **Building ArcStack:** section copy, website URL and uploaded desktop/mobile preview images.
+- **Get in Touch:** centered heading, introduction and form labels.
+- **Page headings:** headings and introductions for Skills, Projects, Services, Journey and Gallery.
+- **Layout & text:** font, heading size, section spacing and project/service card sizes.
+
+Click **Save changes** after editing or uploading. Project and gallery photos can also be replaced in their respective editors. The removed anime showcase and climbing navigation are not displayed on the public site.

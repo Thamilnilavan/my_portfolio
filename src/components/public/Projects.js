@@ -1,65 +1,71 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
-import MagneticButton from "../effects/MagneticButton";
-import TextReveal from "../effects/TextReveal";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
+import { getUiSettings } from "@/content/uiSettings";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Projects() {
-  const { projects } = usePortfolioContent();
+  const { projects, settings } = usePortfolioContent();
+  const ui = getUiSettings(settings);
+  const reduceMotion = useReducedMotion();
+  const [expandedProjects, setExpandedProjects] = useState([]);
+  const [showAll, setShowAll] = useState(false);
+  const categoryName = value => value?.trim().toLowerCase() === "bakery" ? "Business Websites" : value || "Other";
   const [activeCategory, setActiveCategory] = useState("All");
-  const categories = ["All", ...new Set(projects.map((project) => project.category))];
+  const categories = ["All", ...new Set(projects.map((project) => categoryName(project.category)))];
 
   const filteredProjects = activeCategory === "All"
     ? projects
-    : projects.filter(p => p.category === activeCategory);
+    : projects.filter(p => categoryName(p.category) === activeCategory);
+  const visibleProjects = activeCategory === "All" && !showAll ? filteredProjects.slice(0, 3) : filteredProjects;
 
   return (
     <section id="projects" className="py-24 relative">
       <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-purple-600/5 rounded-full blur-[150px] -z-10" />
-      
+
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <SectionHeader 
-          subtitle="Portfolio"
-          title="Featured Projects"
-          description="A selection of my recent work, showcasing complex problem-solving and clean design."
+        <SectionHeader
+          subtitle={ui.sectionProjectsLabel}
+          title={ui.sectionProjectsHeading}
+          description={ui.sectionProjectsDescription}
         />
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
+        <div className="flex flex-wrap justify-center gap-2 mb-5">
           {categories.map((cat) => (
-            <MagneticButton
+            <button type="button" aria-pressed={activeCategory === cat}
               key={cat}
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => { setActiveCategory(cat); setShowAll(false); }}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
-                activeCategory === cat 
-                  ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]" 
+                activeCategory === cat
+                  ? "bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-[0_0_20px_rgba(6,182,212,0.3)]"
                   : "bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white"
               }`}
             >
               {cat}
-            </MagneticButton>
+            </button>
           ))}
         </div>
 
-        <motion.div layout className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div layout className={`grid gap-4 items-stretch ${ui.uiProjectCardSize === "large" ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"}`}>
           <AnimatePresence>
-            {filteredProjects.map((project, i) => (
+            {visibleProjects.map((project, i) => (
               <motion.div
                 key={project.id}
+                className="min-w-0 h-full"
                 layout
-                initial={{ opacity: 0, y: 30 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                transition={{ duration: 0.4, delay: i * 0.1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: reduceMotion ? 0 : 0.25, delay: Math.min(i * 0.04, 0.12) }}
               >
-                <GlassCard className="h-full flex flex-col !p-0 group" tilt={false}>
+                <GlassCard className="h-full !p-0 group" contentClassName="flex flex-col" tilt={false}>
                   {/* Image Area */}
-                  <div className="relative h-56 w-full overflow-hidden bg-[var(--bg-card)]">
+                  <div className="relative aspect-[16/9] shrink-0 w-full overflow-hidden bg-[var(--bg-card)]">
                     {project.image ? (
                       <Image
                         src={project.image}
@@ -67,7 +73,7 @@ export default function Projects() {
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         unoptimized={project.image.startsWith("/api/images/")}
-                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                        className="object-cover transition-transform duration-250 motion-safe:group-hover:scale-[1.02]"
                       />
                     ) : (
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-cyan-500/10 to-purple-600/10 text-white/20">
@@ -76,35 +82,31 @@ export default function Projects() {
                         </svg>
                       </div>
                     )}
-                    
-                    {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-[#050508]/80 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 z-20">
-                      {project.github && (
-                        <a href={project.github} target="_blank" rel="noopener noreferrer" aria-label={`View ${project.title} source code on GitHub`} className="p-3 bg-white/10 hover:bg-cyan-500 rounded-full text-white transition-colors cursor-pointer">
-                          <FaGithub size={20} />
-                        </a>
-                      )}
-                      {project.liveUrl && (
-                        <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" aria-label={`Open the live ${project.title} project`} className="p-3 bg-white/10 hover:bg-purple-500 rounded-full text-white transition-colors cursor-pointer">
-                          <FaExternalLinkAlt size={20} />
-                        </a>
-                      )}
-                    </div>
+
                   </div>
 
-                  <div className="p-6 flex-1 flex flex-col">
-                    <h3 className="text-xl font-bold text-white mb-3 group-hover:text-cyan-400 transition-colors">
+                  <div className="p-4 sm:p-5 flex-1 flex flex-col">
+                    <h3 className="text-lg font-bold leading-[1.35] tracking-[-0.02em] text-white mb-2 md:min-h-[3rem] group-hover:text-cyan-400 transition-colors [overflow-wrap:anywhere]">
                       {project.title}
                     </h3>
-                    <p className="text-gray-400 text-sm leading-relaxed mb-6 flex-1">
-                      {project.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-auto">
+                    <div className="mb-3">
+                      <p id={`project-description-${project.id}`} className={`text-gray-300 text-sm leading-[1.6] md:min-h-[4.2rem] ${expandedProjects.includes(project.id) ? "" : "line-clamp-3"}`}>
+                        {project.description}
+                      </p>
+                      <button type="button" aria-expanded={expandedProjects.includes(project.id)} aria-controls={`project-description-${project.id}`} onClick={() => setExpandedProjects(current => current.includes(project.id) ? current.filter(id => id !== project.id) : [...current, project.id])} className="mt-2 inline-flex min-h-8 items-center text-xs font-semibold text-cyan-300 hover:text-white">
+                        {expandedProjects.includes(project.id) ? "Show less" : "Read more"}<span className="sr-only"> about {project.title}</span>
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap content-start gap-1.5 mt-auto md:min-h-12">
                       {project.techStack?.map((tech) => (
-                        <span key={tech} className="px-3 py-1 text-xs font-medium rounded-full bg-white/5 text-gray-300 border border-white/10">
+                        <span key={tech} className="px-3 py-1 text-[11px] leading-4 font-medium rounded-full bg-white/5 text-gray-300 border border-white/10">
                           {tech}
                         </span>
                       ))}
+                    </div>
+                    <div className="mt-3 flex flex-wrap gap-4 border-t border-white/10 pt-2 text-sm font-semibold">
+                      {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-cyan-300 hover:text-cyan-100"><FaExternalLinkAlt /> Live Demo</a>}
+                      {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-gray-300 hover:text-white"><FaGithub /> GitHub</a>}
                     </div>
                   </div>
                 </GlassCard>
@@ -112,6 +114,7 @@ export default function Projects() {
             ))}
           </AnimatePresence>
         </motion.div>
+        {activeCategory === "All" && filteredProjects.length > 3 && <div className="mt-6 text-center"><button type="button" onClick={() => setShowAll(!showAll)} className="min-h-12 rounded-xl border border-white/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-cyan-400/40 hover:bg-white/5">{showAll ? "Show featured projects" : `View all ${filteredProjects.length} projects`}</button></div>}
       </div>
     </section>
   );

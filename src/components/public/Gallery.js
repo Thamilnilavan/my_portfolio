@@ -6,16 +6,18 @@ import SectionHeader from "../ui/SectionHeader";
 import Modal from "../ui/Modal";
 import TextReveal from "../effects/TextReveal";
 import { HiOutlineZoomIn } from "react-icons/hi";
+import { getUiSettings } from "@/content/uiSettings";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 export default function Gallery() {
-  const { gallery } = usePortfolioContent();
+  const { gallery, settings } = usePortfolioContent();
+  const ui = getUiSettings(settings);
   const [selectedImage, setSelectedImage] = useState(null);
 
   return (
     <section id="gallery" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <SectionHeader subtitle="Behind the scenes" title="Gallery" />
+        <SectionHeader subtitle={ui.sectionGalleryLabel} title={ui.sectionGalleryHeading} />
 
         {gallery.length === 0 ? (
           <div className="text-center text-gray-500 py-16">Gallery coming soon.</div>

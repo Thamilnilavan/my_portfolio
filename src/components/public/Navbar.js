@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { HiMenuAlt3, HiSearch, HiX } from "react-icons/hi";
 import { openCommandPalette } from "../effects/CommandPalette";
 
@@ -14,6 +14,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
+  const reduceMotion = useReducedMotion();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -21,20 +22,22 @@ export default function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
-      
+
       const sections = navItems.map(item => item.href.substring(1));
       let current = "home";
       for (const section of sections) {
         const element = document.getElementById(section);
-        if (element && window.scrollY >= (element.offsetTop - 200)) {
+        if (element && window.scrollY >= (element.getBoundingClientRect().top + window.scrollY - 140)) {
           current = section;
         }
       }
       setActiveSection(current);
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", handleScroll);
+    return () => { window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", handleScroll); };
   }, []);
 
   const scrollTo = (href) => {
@@ -46,7 +49,7 @@ export default function Navbar() {
       const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
       window.scrollTo({
         top: elementPosition - offset,
-        behavior: "smooth"
+        behavior: reduceMotion ? "instant" : "smooth"
       });
     }
   };
@@ -54,19 +57,19 @@ export default function Navbar() {
   const handleLogoClick = () => {
     window.scrollTo({
       top: 0,
-      behavior: "smooth"
+      behavior: reduceMotion ? "instant" : "smooth"
     });
   };
 
   return (
     <>
       <motion.header
-        initial={{ y: -100 }}
+        initial={false}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, type: "spring" }}
         className={`fixed top-0 left-0 right-0 z-40 transition-all duration-500 ${
-          scrolled 
-            ? "py-3 bg-[#050508]/95 backdrop-blur-2xl border-b border-[#00D4FF]/30 shadow-[0_0_40px_rgba(0,212,255,0.15)]" 
+          scrolled
+            ? "py-3 bg-[#050508]/95 backdrop-blur-2xl border-b border-[#00D4FF]/30 shadow-[0_0_40px_rgba(0,212,255,0.15)]"
             : "py-6 bg-transparent"
         }`}
       >
@@ -81,8 +84,8 @@ export default function Navbar() {
             onClick={handleLogoClick}
           >
             <span className="text-white">THA</span>
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] via-[#7C3AED] to-[#FFD700] glow-text">MIL</span>
-            <motion.div 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-violet-300">MIL</span>
+            <motion.div
               className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-[#00D4FF] to-[#7C3AED] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
               initial={{ scaleX: 0 }}
               whileHover={{ scaleX: 1 }}
@@ -90,24 +93,24 @@ export default function Navbar() {
           </motion.button>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
           <nav className="flex items-center gap-2">
-            {navItems.map((item, index) => (
+            {navItems.map((item) => (
               <motion.button
                 type="button"
                 aria-current={activeSection === item.href.substring(1) ? "page" : undefined}
                 key={item.name}
                 onClick={() => scrollTo(item.href)}
-                className={`relative px-4 py-2 text-sm font-bold uppercase tracking-wider transition-all duration-300 rounded-xl ${
-                  activeSection === item.href.substring(1) 
-                    ? "text-[#00D4FF] bg-[#00D4FF]/10" 
+                className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-xl ${
+                  activeSection === item.href.substring(1)
+                    ? "text-[#00D4FF] bg-[#00D4FF]/10"
                     : "text-gray-400 hover:text-white hover:bg-white/5"
                 }`}
-                whileHover={{ scale: 1.05, y: -2 }}
+                whileHover={reduceMotion ? undefined : { y: -2 }}
                 whileTap={{ scale: 0.95 }}
-                initial={{ opacity: 0, y: -20 }}
+                initial={false}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, type: "spring", stiffness: 300 }}
+                transition={{ duration: 0.2 }}
               >
                 {item.name}
                 {activeSection === item.href.substring(1) && (
@@ -139,7 +142,7 @@ export default function Navbar() {
             type="button"
             aria-label="Open navigation menu"
             aria-expanded={mobileMenuOpen}
-            className="md:hidden text-gray-300 p-3 hover:text-[#00D4FF] transition-colors rounded-xl hover:bg-white/5"
+            className="lg:hidden text-gray-300 p-3 hover:text-[#00D4FF] transition-colors rounded-xl hover:bg-white/5"
             onClick={() => setMobileMenuOpen(true)}
             whileHover={{ scale: 1.1, rotate: 90 }}
             whileTap={{ scale: 0.9 }}
@@ -154,11 +157,11 @@ export default function Navbar() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
-            initial={{ opacity: 0, x: "100%" }}
+            initial={reduceMotion ? false : { opacity: 0, x: "100%" }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: "100%" }}
+            exit={reduceMotion ? { opacity: 0 } : { opacity: 0, x: "100%" }}
             transition={{ type: "spring", bounce: 0, duration: 0.5 }}
-            className="fixed inset-0 z-50 bg-[#050508]/98 backdrop-blur-2xl flex flex-col items-center justify-center"
+            className="fixed inset-0 z-50 bg-[#050508]/98 backdrop-blur-2xl flex flex-col items-center justify-center overflow-y-auto py-16"
           >
             <motion.button
               type="button"
@@ -171,31 +174,31 @@ export default function Navbar() {
             >
               <HiX size={36} />
             </motion.button>
-            <nav className="flex flex-col items-center gap-6">
+            <nav className="flex flex-col items-center gap-2">
               <motion.button
                 type="button"
                 onClick={() => {
                   setMobileMenuOpen(false);
                   openCommandPalette();
                 }}
-                className="mb-2 flex items-center gap-3 rounded-2xl border border-[#00D4FF]/25 bg-[#00D4FF]/10 px-6 py-3 text-sm font-bold uppercase tracking-wider text-[#00D4FF]"
+                className="mb-2 flex items-center gap-3 rounded-2xl border border-[#00D4FF]/25 bg-[#00D4FF]/10 px-6 py-3 text-sm font-medium text-[#00D4FF]"
               >
                 <HiSearch size={20} /> Quick access
               </motion.button>
-              {navItems.map((item, i) => (
+              {navItems.map((item) => (
                 <motion.button
                   type="button"
                   aria-current={activeSection === item.href.substring(1) ? "page" : undefined}
                   key={item.name}
-                  initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                  initial={false}
                   animate={{ opacity: 1, y: 0, scale: 1 }}
-                  transition={{ delay: i * 0.1, type: "spring", stiffness: 200 }}
+                  transition={{ duration: 0.2 }}
                   whileHover={{ scale: 1.1, x: 10 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => scrollTo(item.href)}
-                  className={`text-4xl font-black uppercase tracking-wider px-8 py-4 rounded-2xl transition-all duration-300 ${
-                    activeSection === item.href.substring(1) 
-                      ? "text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] via-[#7C3AED] to-[#FFD700] glow-text bg-[#00D4FF]/10" 
+                  className={`text-[28px] font-semibold px-8 py-2 rounded-2xl transition-all duration-300 ${
+                    activeSection === item.href.substring(1)
+                      ? "text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-violet-300 bg-[#00D4FF]/10"
                       : "text-gray-300 hover:text-white hover:bg-white/5"
                   }`}
                 >

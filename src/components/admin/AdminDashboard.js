@@ -18,6 +18,10 @@ import {
 } from "react-icons/hi";
 import { adminFields, adminSections, createEmptyRecord } from "@/content/adminFields";
 import { SERVICE_ICON_MAP, SERVICE_ICON_OPTIONS } from "@/lib/serviceIcons";
+import { uiDefaults, uiOptions } from "@/content/uiSettings";
+import { contactDefaults } from "@/content/contactSettings";
+import { businessDefaults } from "@/content/businessSettings";
+import { getAboutSettings } from "@/content/aboutSettings";
 import { compressImage, formatFileSize } from "@/lib/imageCompression";
 
 function recordTitle(section, record) {
@@ -36,6 +40,7 @@ function recordSubtitle(section, record) {
 }
 
 function selectOptionsFor(section, key) {
+  if (section === "settings" && uiOptions[key]) return uiOptions[key].map(value => ({ value, label: value[0].toUpperCase() + value.slice(1) }));
   if (section === "services" && key === "icon") return SERVICE_ICON_OPTIONS;
   return [];
 }
@@ -324,7 +329,7 @@ function PasswordEditor({ onClose, onSuccess }) {
   return (
     <div className="fixed inset-0 z-[310] flex items-end justify-center bg-black/80 p-0 backdrop-blur-md sm:items-center sm:p-5">
       <button className="absolute inset-0 cursor-default" onClick={onClose} aria-label="Close password editor" />
-      <form onSubmit={submit} className="relative w-full max-w-lg rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
+      <form onSubmit={submit} className="relative w-full max-w-lg rounded-t-3xl border border-white/10 bg-[#0d111e] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">Security</p><h2 className="mt-2 text-2xl font-black">Change admin password</h2></div><button type="button" onClick={onClose} className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-gray-400 hover:text-white"><HiX /></button></div>
         <p className="mt-3 text-sm leading-6 text-gray-500">Enter your current password, then choose a new password with at least 10 characters.</p>
         {formError && <div role="alert" className="mt-5 rounded-xl border border-red-400/20 bg-red-400/10 p-3 text-sm text-red-300">{formError}</div>}
@@ -338,6 +343,13 @@ function PasswordEditor({ onClose, onSuccess }) {
 }
 
 function RecordEditor({ section, editor, setEditor, setData, onSave, working }) {
+  const [settingsPanel, setSettingsPanel] = useState("general");
+  const values = section === "settings" ? getAboutSettings({ ...businessDefaults, ...contactDefaults, ...uiDefaults, ...editor.data }) : editor.data;
+  const fields = adminFields[section].filter(([key]) => {
+    if (section !== "settings") return true;
+    const group = key.startsWith("about") ? "about" : key.startsWith("business") ? "business" : key.startsWith("contact") ? "contact" : key.startsWith("ui") ? "appearance" : key.startsWith("section") ? "sections" : "general";
+    return settingsPanel === group;
+  });
   const [uploading, setUploading] = useState({});
 
   const update = (key, value, type) => {
@@ -379,10 +391,10 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
     }
   };
 
-  const IMAGE_KEYS = ["profileImage", "image", "avatar", "src"];
+  const IMAGE_KEYS = ["businessDesktopImage", "businessMobileImage", "aboutImage", "profileImage", "image", "avatar", "src"];
   const isImageField = (key) => IMAGE_KEYS.includes(key);
   const getImageFolder = (key) => {
-    if (key === "profileImage") return "profile";
+    if (key === "profileImage" || key === "aboutImage") return "profile";
     if (key === "avatar") return "testimonials";
     if (key === "src") return "gallery";
     return "projects";
@@ -394,20 +406,26 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
       <form onSubmit={(event) => {
         if (Object.values(uploading).some(Boolean)) { event.preventDefault(); return; }
         onSave(event);
-      }} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[var(--bg-card)] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
+      }} className="relative max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0d111e] p-6 shadow-2xl sm:rounded-3xl sm:p-8">
         <div className="flex items-center justify-between"><div><p className="text-xs font-bold uppercase tracking-[0.2em] text-cyan-400">{editor.mode === "create" ? "Create" : "Edit"}</p><h2 className="mt-2 text-2xl font-black">{adminSections[section].singular}</h2></div><button type="button" onClick={() => setEditor(null)} className="grid h-10 w-10 place-items-center rounded-xl bg-white/5 text-gray-400 hover:text-white"><HiX /></button></div>
+        {section === "settings" && <div className="mt-6">
+          <div className="flex flex-wrap gap-2" aria-label="Settings categories">{[["general", "Site details"], ["about", "About Me"], ["business", "Building ArcStack"], ["contact", "Get in Touch"], ["sections", "Page headings"], ["appearance", "Layout & text"]].map(([value, label]) => <button key={value} type="button" aria-pressed={settingsPanel === value} onClick={() => setSettingsPanel(value)} className={`rounded-xl px-4 py-2 text-sm font-semibold ${settingsPanel === value ? "bg-cyan-400/15 text-cyan-300" : "bg-white/5 text-gray-400"}`}>{label}</button>)}</div>
+          {settingsPanel === "about" && <p className="mt-3 text-sm leading-6 text-gray-400">Customize the About Me section here. Role badges use your site roles until you change them. Project and skill counts update automatically. Save changes to publish your edits.</p>}
+          {settingsPanel === "contact" && <p className="mt-3 text-sm leading-6 text-gray-400">Edit the centered heading and contact form copy. Email, phone and social links are managed in Site details.</p>}
+        </div>}
+        {section === "settings" && settingsPanel === "appearance" && <p className="mt-3 text-sm leading-6 text-gray-400">Adjust the public pages without changing the admin design. Compact keeps the current spacing and smaller cards. Save changes to apply.</p>}
         <div className="mt-7 grid gap-5 sm:grid-cols-2">
-          {adminFields[section].map(([key, label, type = "text"]) => (
+          {fields.map(([key, label, type = "text"]) => (
             <label key={key} className={type === "textarea" || type === "array" ? "sm:col-span-2" : ""}>
               <span className="mb-2 block text-sm font-semibold text-gray-300">{label}</span>
               {type === "boolean" ? (
-                <button type="button" role="switch" aria-checked={Boolean(editor.data[key])} onClick={() => update(key, !editor.data[key], type)} className={`flex h-12 w-full items-center justify-between rounded-xl border px-4 ${editor.data[key] ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300" : "border-white/10 bg-white/5 text-gray-500"}`}><span>{editor.data[key] ? "Published" : "Draft"}</span><span className={`h-6 w-11 rounded-full p-1 ${editor.data[key] ? "bg-emerald-400" : "bg-gray-700"}`}><span className={`block h-4 w-4 rounded-full bg-white transition ${editor.data[key] ? "translate-x-5" : ""}`} /></span></button>
+                <button type="button" role="switch" aria-checked={Boolean(values[key])} onClick={() => update(key, !values[key], type)} className={`flex h-12 w-full items-center justify-between rounded-xl border px-4 ${values[key] ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300" : "border-white/10 bg-white/5 text-gray-500"}`}><span>{key.startsWith("about") || key.startsWith("business") ? (values[key] ? "Shown" : "Hidden") : (values[key] ? "Published" : "Draft")}</span><span className={`h-6 w-11 rounded-full p-1 ${values[key] ? "bg-emerald-400" : "bg-gray-700"}`}><span className={`block h-4 w-4 rounded-full bg-white transition ${values[key] ? "translate-x-5" : ""}`} /></span></button>
               ) : type === "textarea" ? (
-                <textarea required value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} rows={5} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-cyan-400/50" />
+                <textarea required={!key.startsWith("business") && !key.startsWith("about")} value={values[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} rows={5} className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 outline-none focus:border-cyan-400/50" />
               ) : type === "select" ? (
                 <div className="flex items-center gap-3">
-                  {section === "services" && key === "icon" && <IconPreview iconKey={editor.data[key]} />}
-                  <select value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 flex-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50">
+                  {section === "services" && key === "icon" && <IconPreview iconKey={values[key]} />}
+                  <select value={values[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 flex-1 cursor-pointer rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50">
                     {selectOptionsFor(section, key).map((option) => (
                       <option key={option.value} value={option.value} className="bg-[#0b0b13]">{option.label}</option>
                     ))}
@@ -415,29 +433,29 @@ function RecordEditor({ section, editor, setEditor, setData, onSave, working }) 
                 </div>
               ) : key === "cvUrl" ? (
                 <div className="space-y-3">
-                  <input type="text" required value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="Upload a PDF or enter a CV URL" className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                  <input type="text" required value={values[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="Upload a PDF or enter a CV URL" className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
                   <input type="file" aria-label="Upload CV PDF" accept=".pdf,application/pdf" disabled={uploading[key]} onChange={(event) => { const file = event.target.files?.[0]; if (file) handleFileUpload(key, file, "cv"); event.target.value = ""; }} className="block w-full text-sm text-gray-400 file:mr-3 file:cursor-pointer file:rounded-xl file:border-0 file:bg-cyan-400/10 file:px-4 file:py-3 file:font-semibold file:text-cyan-300 disabled:opacity-50" />
                   <p className="text-xs text-gray-400" role="status">{uploading[key] ? "Uploading CV…" : "PDF, up to 4 MB. Save changes after uploading."}</p>
-                  {editor.data[key] && <a href={editor.data[key]} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-cyan-300 hover:underline">View CV</a>}
+                  {values[key] && <a href={values[key]} target="_blank" rel="noopener noreferrer" className="inline-block text-sm text-cyan-300 hover:underline">View CV</a>}
                 </div>
               ) : isImageField(key) ? (
                 <div className="space-y-3">
                   <div className="flex gap-2">
-                    <input type="text" required={!['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="/assets/uploads/image.png or https://..." className="h-12 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                    <input type="text" required={!key.startsWith("business") && !key.startsWith("about") && !['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={values[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} placeholder="/assets/uploads/image.png or https://..." className="h-12 min-w-0 flex-1 rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
                     <label className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/5 text-gray-400 hover:bg-white/10 hover:text-cyan-300 cursor-pointer transition">
                       <HiPlus size={20} />
-                      <input type="file" accept="image/*" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleFileUpload(key, file, getImageFolder(key)); event.target.value = ""; }} />
+                      <input type="file" aria-label={`Upload ${label}`} accept="image/*" className="hidden" onChange={(event) => { const file = event.target.files?.[0]; if (file) handleFileUpload(key, file, getImageFolder(key)); event.target.value = ""; }} />
                     </label>
                   </div>
                   {uploading[key] && <p className="text-xs text-cyan-400 animate-pulse">Uploading…</p>}
-                  {editor.data[key] && (
+                  {values[key] && (
                     <div className="relative h-24 w-24 overflow-hidden rounded-xl border border-white/10 bg-white/5">
-                      <img src={editor.data[key]} alt="Preview" className="h-full w-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
+                      <img src={values[key]} alt="Preview" className="h-full w-full object-cover" onError={(e) => { e.target.style.display = "none"; }} />
                     </div>
                   )}
                 </div>
               ) : (
-                <input type={type === "array" ? "text" : type} required={!['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={type === "array" ? (editor.data[key] || []).join(", ") : editor.data[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
+                <input type={type === "array" ? "text" : type} required={!key.startsWith("business") && !key.startsWith("about") && !['github','liveUrl','avatar','profileImage','image','src'].includes(key)} value={type === "array" ? (values[key] || []).join(", ") : values[key] ?? ""} onChange={(event) => update(key, event.target.value, type)} className="h-12 w-full rounded-xl border border-white/10 bg-white/5 px-4 outline-none focus:border-cyan-400/50" />
               )}
             </label>
           ))}

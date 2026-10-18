@@ -1,5 +1,5 @@
 "use client";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
 import Image from "next/image";
 import { HiArrowDown, HiOutlineDownload, HiPlay } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaReact, FaNodeJs, FaPython, FaDatabase, FaCloud, FaCode } from "react-icons/fa";
@@ -29,16 +29,18 @@ const innerIconPositions = [
 
 export default function Hero() {
   const { settings: s } = usePortfolioContent();
+  const reduceMotion = useReducedMotion();
   const { scrollY } = useScroll();
   
   const roles = s.typewriterRoles
     ? s.typewriterRoles.split(",").map((r) => r.trim()).filter(Boolean)
     : ["Full-Stack Developer"];
 
-  const role = useTypewriter(roles.length ? roles : ["Developer"], 100, 50, 2000);
+  const animatedRole = useTypewriter(roles.length ? roles : ["Developer"], 65, 35, 3500);
+  const role = reduceMotion ? roles[0] || "Developer" : animatedRole;
 
   const scrollTo = (id) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+    document.querySelector(id)?.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth" });
   };
 
   const socials = [
@@ -68,7 +70,7 @@ export default function Hero() {
   const rotateProfile = useTransform(scrollY, [0, 500], [0, 10]);
 
   return (
-    <section id="home" className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <section id="home" className="relative min-h-[80svh] flex items-center justify-center pt-28 pb-20 lg:pt-32 lg:pb-20 overflow-hidden">
       {/* Background gradient effects */}
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
@@ -99,11 +101,11 @@ export default function Hero() {
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full grid lg:grid-cols-2 gap-12 items-center">
         <motion.div 
-          style={{ y: yText }}
-          className="text-left"
+          style={reduceMotion ? undefined : { y: yText }}
+          className="min-w-0 text-left"
         >
           <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.9 }}
+            initial={false}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, type: "spring" }}
             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-[#00D4FF]/40 mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(0,212,255,0.2)]"
@@ -120,24 +122,24 @@ export default function Hero() {
           </motion.div>
 
           <motion.h1 
-            initial={{ opacity: 0, y: 30 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
-            className="text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 leading-tight"
+            className="text-4xl sm:text-5xl lg:text-[64px] font-extrabold tracking-[-0.04em] mb-6 leading-tight"
           >
-            <span className="block text-white">Hi, I&apos;m</span>
-            <span className="block bg-gradient-to-r from-[#67E8F9] via-[#A78BFA] to-[#FDE68A] bg-clip-text text-transparent leading-[1.05]">
+            <span className="mb-3 block text-2xl font-medium tracking-normal text-gray-200">Hi, I&apos;m</span>
+            <span className="block bg-gradient-to-r from-[#67E8F9] via-[#A78BFA] to-[#FDE68A] bg-clip-text text-transparent leading-[1.08] [overflow-wrap:anywhere]">
               {s.name}
             </span>
           </motion.h1>
 
           <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
-            className="h-14 md:h-20 mb-10"
+            className="min-h-[4.2rem] sm:min-h-14 mb-4"
           >
-            <p className="text-2xl md:text-4xl text-gray-400 font-light">
+            <p className="text-xl md:text-[28px] text-gray-400 font-light">
               I am a <span className="text-white font-semibold text-gradient">{role}</span>
               <motion.span 
                 className="animate-pulse text-[#00D4FF]"
@@ -148,19 +150,19 @@ export default function Hero() {
           </motion.div>
 
           <motion.div 
-            initial={{ opacity: 0, y: 30 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
-            className="text-xl md:text-2xl text-gray-400 mb-12 max-w-xl leading-relaxed"
+            className="text-base md:text-lg text-gray-300 mb-8 max-w-xl leading-[1.7]"
           >
-            <TextReveal text={s.heroBio} delay={0.7} />
+            <TextReveal text={!s.heroBio || s.heroBio.startsWith("I am a motivated and detail-oriented") ? "I build responsive web and mobile applications with React, Next.js, and Node.js." : s.heroBio} />
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-wrap items-center gap-3 [&_button]:px-5 [&_button]:text-sm"
           >
             <Button 
               variant="gradient"
@@ -181,19 +183,19 @@ export default function Hero() {
                 href={s.cvUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl font-semibold glass text-white hover:bg-white/15 hover:border-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-105"
+                className="relative inline-flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl text-sm font-semibold glass text-white hover:bg-white/15 hover:border-white/40 hover:shadow-[0_0_30px_rgba(255,255,255,0.1)] transition-all duration-300 hover:scale-105"
               >
-                <HiOutlineDownload className="text-xl" /> CV
+                <HiOutlineDownload className="text-xl" /> Download CV
               </a>
             )}
           </motion.div>
 
           {socials.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={false}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
-              className="flex items-center gap-5 mt-14"
+              className="flex items-center gap-5 mt-8"
             >
               {socials.map(({ Icon, href }, i) => (
                 <motion.a
@@ -217,12 +219,12 @@ export default function Hero() {
         </motion.div>
 
         <motion.div 
-          style={{ y: yProfile, rotate: rotateProfile }}
+          style={reduceMotion ? undefined : { y: yProfile, rotate: rotateProfile }}
           className="relative hidden lg:flex justify-center items-center h-full"
         >
           <motion.div
             className="relative w-96 h-96 md:w-[500px] md:h-[500px] rounded-full"
-            initial={{ opacity: 0, scale: 0.8 }}
+            initial={false}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, delay: 0.2, type: "spring" }}
           >
@@ -338,7 +340,7 @@ export default function Hero() {
                   src={s.profileImage}
                   alt={`${s.name} profile photo`}
                   fill
-                  priority
+                  preload
                   unoptimized={s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/")}
                   sizes="(max-width: 768px) 224px, 340px"
                   className="w-full h-full object-cover"

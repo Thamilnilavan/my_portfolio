@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import MagneticButton from "../effects/MagneticButton";
+import { getUiSettings } from "@/content/uiSettings";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
 import {
@@ -63,7 +64,8 @@ const skillIcons = {
 };
 
 export default function Skills() {
-  const { skills } = usePortfolioContent();
+  const { skills, settings } = usePortfolioContent();
+  const ui = getUiSettings(settings);
   const [activeCategory, setActiveCategory] = useState("All");
 
   const filteredSkills =
@@ -75,13 +77,13 @@ export default function Skills() {
     <section id="skills" className="py-24 relative">
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <SectionHeader
-          subtitle="My Expertise"
-          title="Technical Skills"
-          description="A showcase of my technical proficiencies and the tools I use to bring ideas to life."
+          subtitle={ui.sectionSkillsLabel}
+          title={ui.sectionSkillsHeading}
+          description={ui.sectionSkillsDescription}
         />
 
         {/* Category Filter */}
-        <div className="flex flex-wrap justify-center gap-4 mb-16">
+        <div className="flex flex-wrap justify-center gap-3 mb-6">
           {categories.map((cat) => (
             <MagneticButton
               key={cat}

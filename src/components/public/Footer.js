@@ -23,7 +23,7 @@ export default function Footer() {
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#00D4FF] to-transparent opacity-50" />
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="grid md:grid-cols-3 gap-12 mb-12 items-center">
+        <div className="grid md:grid-cols-3 gap-6 mb-6 items-center">
           
           {/* Brand */}
           <div className="text-center md:text-left">
