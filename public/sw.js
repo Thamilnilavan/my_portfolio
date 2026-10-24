@@ -1,4 +1,4 @@
-const CACHE_NAME = "portfolio-v2";
+const CACHE_NAME = "portfolio-v3";
 const urlsToCache = [
   "/",
   "/favicon.ico",
@@ -17,15 +17,21 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  const pathname = new URL(event.request.url).pathname;
+  // Never store authenticated responses, API data, or crawler metadata.
+  if (pathname.startsWith("/admin") || pathname.startsWith("/api/") || pathname === "/robots.txt" || pathname === "/sitemap.xml") return;
+
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          if (response.ok && pathname === "/") {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
           return response;
         })
-        .catch(() => caches.match(event.request).then((response) => response || caches.match("/")))
+        .catch(() => caches.match(event.request).then((response) => response || Response.error()))
     );
     return;
   }

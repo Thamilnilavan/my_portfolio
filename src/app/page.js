@@ -16,6 +16,11 @@ import CommandPalette from "@/components/effects/CommandPalette";
 import PortfolioContentProvider from "@/components/providers/PortfolioContentProvider";
 import { getPortfolioContent } from "@/lib/portfolioRepository";
 
+import { homeMetadata } from "@/lib/siteMetadata";
+import { portfolioSchema, serializeSchema } from "@/lib/schema";
+
+export const metadata = homeMetadata();
+
 // Portfolio content is changed from the admin dashboard and must be fetched
 // from MongoDB for every request instead of being fixed at deployment time.
 export const dynamic = "force-dynamic";
@@ -25,12 +30,13 @@ export default async function Home() {
 
   return (
     <PortfolioContentProvider content={content}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializeSchema(portfolioSchema(content.settings)) }} />
       <CinematicText />
       <Navbar />
       <CommandPalette />
       
       <PortfolioAppearance>
-      <main className="flex flex-col min-h-screen">
+      <main id="main-content" tabIndex={-1} className="flex flex-col min-h-screen">
         <Hero />
         <SectionTransition delay={0.1}>
           <About />

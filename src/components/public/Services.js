@@ -1,5 +1,6 @@
 "use client";
-import { motion, useReducedMotion } from "framer-motion";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
+import { motion } from "framer-motion";
 import { HiArrowUpRight } from "react-icons/hi2";
 import { getUiSettings } from "@/content/uiSettings";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
@@ -15,7 +16,7 @@ const accents = [
 export default function Services() {
   const { services, settings } = usePortfolioContent();
   const ui = getUiSettings(settings);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   return (
     <section id="services" aria-labelledby="services-heading" className="relative">
       <div className="mx-auto max-w-7xl px-6">

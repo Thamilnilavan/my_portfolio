@@ -1,6 +1,7 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import { useState, useEffect, useRef } from "react";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { HiMenuAlt3, HiSearch, HiX } from "react-icons/hi";
 import { openCommandPalette } from "../effects/CommandPalette";
 
@@ -14,7 +15,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("home");
@@ -30,7 +31,7 @@ export default function Navbar() {
     const onKey = event => {
       if (event.key === "Escape") { setMobileMenuOpen(false); menuButton.current?.focus(); }
       if (event.key !== "Tab") return;
-      const items = [...(menuPanel.current?.querySelectorAll("button") || [])];
+      const items = [...(menuPanel.current?.querySelectorAll("button, a[href]") || [])];
       const first = items[0], last = items.at(-1);
       if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
       if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
@@ -62,26 +63,6 @@ export default function Navbar() {
     return () => { window.removeEventListener("scroll", handleScroll); window.removeEventListener("resize", handleScroll); };
   }, []);
 
-  const scrollTo = (href) => {
-    setMobileMenuOpen(false);
-    const id = href.substring(1);
-    const element = document.getElementById(id);
-    if (element) {
-      const offset = 80;
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      window.scrollTo({
-        top: elementPosition - offset,
-        behavior: reduceMotion ? "instant" : "smooth"
-      });
-    }
-  };
-
-  const handleLogoClick = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: reduceMotion ? "instant" : "smooth"
-    });
-  };
 
   return (
     <>
@@ -96,14 +77,13 @@ export default function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <motion.button
-            type="button"
-            aria-label="Scroll to the top"
+          <motion.a
+            href="#home"
+            aria-label="Go to home"
             className="text-3xl font-black tracking-tighter cursor-pointer relative group"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={{ type: "spring", stiffness: 400 }}
-            onClick={handleLogoClick}
           >
             <span className="text-white">THA</span>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-violet-300">MIL</span>
@@ -112,17 +92,17 @@ export default function Navbar() {
               initial={{ scaleX: 0 }}
               whileHover={{ scaleX: 1 }}
             />
-          </motion.button>
+          </motion.a>
 
           {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-3">
           <nav className="flex items-center gap-2">
             {navItems.map((item) => (
-              <motion.button
-                type="button"
+              <motion.a
+                href={item.href}
                 aria-current={activeSection === item.href.substring(1) ? "page" : undefined}
                 key={item.name}
-                onClick={() => scrollTo(item.href)}
+                onClick={() => { setMobileMenuOpen(false); }}
                 className={`relative px-4 py-2 text-sm font-medium transition-all duration-300 rounded-xl ${
                   activeSection === item.href.substring(1)
                     ? "text-[#00D4FF] bg-[#00D4FF]/10"
@@ -142,7 +122,7 @@ export default function Navbar() {
                     transition={{ type: "spring", stiffness: 300, damping: 30 }}
                   />
                 )}
-              </motion.button>
+              </motion.a>
             ))}
           </nav>
             <motion.button
@@ -212,8 +192,8 @@ export default function Navbar() {
                 <HiSearch size={20} /> Quick access
               </motion.button>
               {navItems.map((item) => (
-                <motion.button
-                  type="button"
+                <motion.a
+                  href={item.href}
                   aria-current={activeSection === item.href.substring(1) ? "page" : undefined}
                   key={item.name}
                   initial={false}
@@ -221,7 +201,7 @@ export default function Navbar() {
                   transition={{ duration: 0.2 }}
                   whileHover={{ scale: 1.1, x: 10 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => scrollTo(item.href)}
+                  onClick={() => { setMobileMenuOpen(false); }}
                   className={`text-[28px] font-semibold px-8 py-2 rounded-2xl transition-all duration-300 ${
                     activeSection === item.href.substring(1)
                       ? "text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 to-violet-300 bg-[#00D4FF]/10"
@@ -229,7 +209,7 @@ export default function Navbar() {
                   }`}
                 >
                   {item.name}
-                </motion.button>
+                </motion.a>
               ))}
             </nav>
           </motion.div>

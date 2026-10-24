@@ -1,6 +1,7 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import { useRef, useState } from "react";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useInView } from "framer-motion";
 import { getContactSettings } from "@/content/contactSettings";
 import Input from "../ui/Input";
 import { HiOutlineMail, HiOutlinePhone, HiOutlineLocationMarker, HiArrowRight, HiArrowUp } from "react-icons/hi";
@@ -21,10 +22,11 @@ export default function Contact() {
   const content = getContactSettings(s);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [website, setWebsite] = useState("");
+  const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const sceneRef = useRef(null);
   const sceneVisible = useInView(sceneRef, { amount: 0.1 });
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const animated = !reduceMotion && sceneVisible;
   const reveal = (delay = 0) => ({
     initial: false,
@@ -36,6 +38,7 @@ export default function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
+    setStatus("Sending your message…");
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -45,10 +48,12 @@ export default function Contact() {
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || "Unable to send your message.");
       toast.success("Message sent successfully!");
+      setStatus("Message sent successfully!");
       setFormData({ name: "", email: "", subject: "", message: "" });
       setWebsite("");
     } catch (error) {
       toast.error(error.message || "Failed to send your message.");
+      setStatus(error.message || "Failed to send your message.");
     } finally {
       setLoading(false);
     }
@@ -111,7 +116,7 @@ export default function Contact() {
                 {info.href && <HiArrowRight aria-hidden="true" className="-rotate-45 text-gray-600 transition-colors group-hover:text-cyan-300" />}
               </div>)}
             </div>
-            {socials.length > 0 && <div className="mt-5 flex flex-wrap items-center gap-3"><span className="mr-2 text-[10px] uppercase tracking-[0.15em] text-gray-500">Elsewhere</span>{socials.map(({ Icon, href, label }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit my ${label} profile`} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-gray-400 transition-colors hover:border-violet-400/40 hover:bg-violet-400/10 hover:text-white"><Icon size={17} /></a>)}</div>}
+            {socials.length > 0 && <div className="mt-5 flex flex-wrap items-center gap-3"><span className="mr-2 text-[10px] uppercase tracking-[0.15em] text-gray-500">Elsewhere</span>{socials.map(({ Icon, href, label }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={`Visit my ${label} profile (opens in a new tab)`} className="grid h-10 w-10 place-items-center rounded-full border border-white/10 text-gray-400 transition-colors hover:border-violet-400/40 hover:bg-violet-400/10 hover:text-white"><Icon size={17} /></a>)}</div>}
           </motion.div>
 
           <motion.div {...reveal(0.15)} className="relative min-w-0 rounded-[28px] border border-violet-300/20 bg-gradient-to-br from-[#111525]/95 via-[#11101c]/95 to-[#180f25]/95 p-5 shadow-[0_25px_90px_rgba(0,0,0,0.3)] sm:p-8">
@@ -123,12 +128,13 @@ export default function Contact() {
               <Input label="Subject" name="subject" placeholder="What do you have in mind?" value={formData.subject} onChange={handleChange} minLength={3} required />
               <Input label="Your message" type="textarea" name="message" value={formData.message} onChange={handleChange} minLength={10} placeholder="A little about your idea, goals, or opportunity…" required />
               <button type="submit" aria-label={loading ? "Sending your message" : content.contactSubmitLabel} disabled={loading} className="group flex min-h-12 w-full items-center justify-between rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-violet-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_8px_30px_rgba(99,102,241,0.2)] transition-shadow hover:shadow-[0_8px_35px_rgba(99,102,241,0.4)] disabled:cursor-wait disabled:opacity-60"><span role="status">{loading ? "Sending your message…" : content.contactSubmitLabel}</span><HiArrowRight aria-hidden="true" size={20} className="transition-transform group-hover:translate-x-1" /></button>
+              <p role="status" aria-live="polite" className="text-sm text-gray-200">{status}</p>
             </form>
-            {whatsappHref && <p className="mt-5 text-center text-xs text-gray-500">Prefer a quick chat? <a href={whatsappHref} target="_blank" rel="noopener noreferrer" className="ml-1 inline-flex items-center gap-1.5 font-medium text-emerald-300 transition-colors hover:text-emerald-200"><FaWhatsapp aria-hidden="true" />Let’s talk on WhatsApp</a></p>}
+            {whatsappHref && <p className="mt-5 text-center text-xs text-gray-500">Prefer a quick chat? <a href={whatsappHref} target="_blank" rel="noopener noreferrer" aria-label="Talk on WhatsApp (opens in a new tab)" className="ml-1 inline-flex items-center gap-1.5 font-medium text-emerald-300 transition-colors hover:text-emerald-200"><FaWhatsapp aria-hidden="true" />Let’s talk on WhatsApp</a></p>}
           </motion.div>
         </div>
       </div>
-      {whatsappHref && <a href={whatsappHref} target="_blank" rel="noopener noreferrer" aria-label="Contact me on WhatsApp" className="fixed bottom-6 right-6 z-50 hidden h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white transition-colors hover:bg-green-500 md:flex"><FaWhatsapp size={22} /></a>}
+      {whatsappHref && <a href={whatsappHref} target="_blank" rel="noopener noreferrer" aria-label="Contact me on WhatsApp (opens in a new tab)" className="fixed bottom-6 right-6 z-50 hidden h-12 w-12 items-center justify-center rounded-full bg-green-600 text-white transition-colors hover:bg-green-500 md:flex"><FaWhatsapp size={22} /></a>}
     </section>
   );
 }

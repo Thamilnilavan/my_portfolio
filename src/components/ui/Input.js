@@ -12,15 +12,15 @@ const Input = forwardRef(({ label, type = "text", error, className = "", ...prop
       {label && (
         <motion.label 
           htmlFor={inputId}
-          initial={{ opacity: 0, y: -10 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           className="block text-sm font-semibold text-gray-300 mb-3 transition-colors"
         >
-          {label}
+          {label}{props.required && <span> (required)</span>}
         </motion.label>
       )}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={false}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3 }}
         className="relative group"
@@ -50,7 +50,7 @@ const Input = forwardRef(({ label, type = "text", error, className = "", ...prop
       {error && (
         <motion.span 
           id={errorId}
-          initial={{ opacity: 0, x: -10 }}
+          initial={false}
           animate={{ opacity: 1, x: 0 }}
           className="text-red-400 text-sm mt-2 block font-medium"
         >

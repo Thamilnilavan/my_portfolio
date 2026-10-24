@@ -11,12 +11,14 @@ import MotionProvider from "@/components/effects/MotionProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
+import { isProductionSite, pages, siteUrl } from "@/lib/siteMetadata";
+
 export const metadata = {
-  title: "Thamil | Full-Stack Developer & UI/UX Designer",
-  description: " portfolio of Thamil, a senior full-stack developer and UI/UX designer specializing in creating premium digital experiences.",
-  icons: {
-    icon: "/assets/my1.png",
-  },
+  metadataBase: new URL(siteUrl),
+  title: { default: pages.home.title, template: "%s | Thamil" },
+  description: pages.home.description,
+  robots: { index: isProductionSite, follow: true },
+  icons: { icon: "/assets/my1.png" },
   manifest: "/manifest.json",
 };
 
@@ -24,6 +26,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className="scroll-smooth" data-scroll-behavior="smooth">
       <body className={`${inter.className} bg-[var(--bg-primary)] text-white antialiased selection:bg-[#00D4FF]/30`}>
+        <a href="#main-content" className="skip-link">Skip to main content</a>
         <MotionProvider>
           <AnimatedBackground />
           <CustomCursor />

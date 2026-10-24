@@ -1,6 +1,7 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import { useEffect, useRef, useState } from "react";
-import { motion, useReducedMotion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
+import { motion, useScroll, useTransform, useMotionValueEvent } from "framer-motion";
 import { HiBriefcase, HiLocationMarker, HiCalendar, HiArrowRight } from "react-icons/hi";
 import SectionHeader from "../ui/SectionHeader";
 import { getUiSettings } from "@/content/uiSettings";
@@ -32,7 +33,7 @@ function JourneyTimeline({ experience }) {
   const [reached, setReached] = useState(0);
   const [ready, setReady] = useState(false);
   const [finished, setFinished] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const { scrollYProgress } = useScroll({ target: timeline, offset: ["start 65%", "end 65%"] });
   const arrowTop = useTransform(scrollYProgress, value => `${value * 100}%`);
   const activate = progress => {
@@ -74,7 +75,7 @@ function JourneyTimeline({ experience }) {
           return <li key={exp.id} className="relative min-w-0 pl-11 md:grid md:grid-cols-2 md:gap-16 md:pl-0">
             <motion.span ref={node => { markers.current[index] = node; }} aria-hidden="true" animate={visible ? { scale: [1, 1.4, 1], borderColor: "rgba(103,232,249,0.7)" } : { scale: 1, borderColor: "rgba(255,255,255,0.15)" }} transition={{ duration: reduceMotion ? 0 : 0.65 }} className={`absolute left-4 top-7 z-20 grid h-5 w-5 -translate-x-1/2 place-items-center rounded-full border bg-[#0d0b18] md:left-1/2 ${visible ? "shadow-[0_0_18px_rgba(103,232,249,0.35)]" : ""}`}><span className={`h-1.5 w-1.5 rounded-full ${visible ? accent.line : "bg-white/20"}`} />{ready && index <= reached && !reduceMotion && <ArrowBurst />}</motion.span>
             <motion.span aria-hidden="true" initial={false} animate={{ opacity: visible ? 1 : 0.15, scaleX: visible ? 1 : 0 }} transition={{ duration: reduceMotion ? 0 : 0.3 }} className={`absolute left-4 top-[38px] h-px w-7 bg-gradient-to-r ${accent.glow} to-white/30 md:left-1/2 md:w-8 ${left ? "md:-translate-x-full md:origin-right" : "md:origin-left"}`} />
-            <motion.article initial={false} animate={{ opacity: visible ? 1 : 0, x: visible || reduceMotion ? 0 : left ? -25 : 25, y: visible || reduceMotion ? 0 : 12, filter: visible ? "blur(0px)" : "blur(6px)" }} transition={{ duration: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }} aria-hidden={!visible} inert={!visible} className={`group relative min-w-0 overflow-hidden rounded-[22px] border ${accent.border} bg-[#0d0c17]/95 p-5 sm:p-6 ${left ? "md:col-start-1" : "md:col-start-2"}`}>
+            <motion.article initial={false} animate={{ opacity: 1, x: 0, y: 0 }} transition={{ duration: reduceMotion ? 0 : 0.65, ease: [0.22, 1, 0.36, 1] }} className={`group relative min-w-0 overflow-hidden rounded-[22px] border ${accent.border} bg-[#0d0c17]/95 p-5 sm:p-6 ${left ? "md:col-start-1" : "md:col-start-2"}`}>
               <div aria-hidden="true" className={`pointer-events-none absolute inset-0 bg-gradient-to-br ${accent.glow} via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-100`} />
               <motion.div aria-hidden="true" initial={false} animate={{ opacity: visible ? [0, 0.5, 0] : 0 }} transition={{ duration: reduceMotion ? 0 : 0.8 }} className={`pointer-events-none absolute inset-0 rounded-[22px] border-2 ${accent.border} shadow-[inset_0_0_35px_rgba(103,232,249,0.2)]`} />
               <span aria-hidden="true" className="pointer-events-none absolute -right-1 -top-4 text-[90px] font-black leading-none tracking-tighter text-white/[0.025]">{String(index + 1).padStart(2, "0")}</span>

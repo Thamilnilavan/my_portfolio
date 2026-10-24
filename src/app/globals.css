@@ -351,3 +351,13 @@ main p { line-height: 1.65; }
   .portfolio-ui h2 { overflow-wrap: anywhere; }
   .portfolio-ui input, .portfolio-ui textarea { font-size: 16px; }
 }
+
+/* Keep keyboard entry visible above fixed navigation. */
+.skip-link { position: fixed; top: 12px; left: 12px; z-index: 9999; padding: 12px 18px; border-radius: 8px; background: #fff; color: #080b16; transform: translateY(-200%); }
+.skip-link:focus { transform: translateY(0); }
+#main-content { scroll-margin-top: 100px; }
+main .text-gray-500 { color: #a1a1aa; }
+main input::placeholder, main textarea::placeholder { color: #a1a1aa; }
+
+[data-motion-paused="true"] *, [data-motion-paused="true"] *::before, [data-motion-paused="true"] *::after { animation-play-state: paused !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
+[data-motion-paused="true"] .hero-copy { transform: none !important; }

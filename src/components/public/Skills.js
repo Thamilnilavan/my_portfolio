@@ -1,4 +1,5 @@
 "use client";
+import { useMotionPreference } from "../effects/MotionProvider";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
@@ -65,6 +66,7 @@ const skillIcons = {
 
 export default function Skills() {
   const { skills, settings } = usePortfolioContent();
+  const reduceMotion = useMotionPreference();
   const ui = getUiSettings(settings);
   const [activeCategory, setActiveCategory] = useState("All");
 
@@ -87,6 +89,7 @@ export default function Skills() {
           {categories.map((cat) => (
             <MagneticButton
               key={cat}
+              aria-pressed={activeCategory === cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                 activeCategory === cat
@@ -111,7 +114,7 @@ export default function Skills() {
                 <motion.div
                   key={skill.id}
                   layout
-                  initial={{ opacity: 0, scale: 0.8 }}
+                  initial={false}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.8 }}
                   transition={{ duration: 0.3 }}
@@ -120,8 +123,9 @@ export default function Skills() {
                     {/* Loading animation bar */}
                     <motion.div
                       className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-purple-500/20"
-                      initial={{ width: "0%" }}
-                      whileInView={{ width: `${skill.level}%` }}
+                      initial={false}
+                      style={{ width: `${skill.level}%`, transformOrigin: "left" }}
+                      whileInView={reduceMotion ? undefined : { scaleX: [0, 1] }}
                       viewport={{ once: true }}
                       transition={{ duration: 1, delay: index * 0.1 }}
                     />

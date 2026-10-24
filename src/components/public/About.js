@@ -1,8 +1,9 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { getAboutSettings } from "@/content/aboutSettings";
-import { animate, motion, useInView, useReducedMotion } from "framer-motion";
+import { animate, motion, useInView } from "framer-motion";
 import { HiArrowRight, HiCode, HiLightningBolt, HiDeviceMobile, HiOutlineDownload } from "react-icons/hi";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
 
@@ -27,7 +28,7 @@ function CinematicCount({ value, enabled }) {
 export default function About() {
   const { settings, projects, skills } = usePortfolioContent();
   const about = getAboutSettings(settings);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const cinematic = about.aboutAnimate && !reduceMotion;
   const sceneRef = useRef(null);
   const sceneVisible = useInView(sceneRef, { amount: 0.1 });

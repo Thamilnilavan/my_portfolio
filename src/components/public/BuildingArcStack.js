@@ -1,7 +1,8 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { HiArrowUpRight, HiOutlineComputerDesktop, HiOutlineDevicePhoneMobile } from "react-icons/hi2";
 import { HiArrowRight } from "react-icons/hi";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
@@ -12,7 +13,7 @@ export default function BuildingArcStack() {
   const content = getBusinessSettings(settings);
   const ref = useRef(null);
   const [mobile, setMobile] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 80%", "end 55%"] });
   const progress = useTransform(scrollYProgress, [0.15, 0.9], [0, 1]);
   if (!content.businessEnabled) return null;

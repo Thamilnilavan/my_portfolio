@@ -24,22 +24,15 @@ export default function Gallery() {
         ) : (
           <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
             {gallery.map((item, i) => (
-              <motion.div
+              <motion.button
+                type="button"
                 key={item.id}
-                initial={{ opacity: 0, y: 20 }}
+                initial={false}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="relative overflow-hidden rounded-2xl group cursor-pointer break-inside-avoid"
+                className="relative block w-full overflow-hidden rounded-2xl group cursor-pointer break-inside-avoid text-left"
                 onClick={() => setSelectedImage(item)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedImage(item);
-                  }
-                }}
-                role="button"
-                tabIndex={0}
                 aria-label={`Open ${item.title}`}
               >
                 <Image
@@ -64,7 +57,7 @@ export default function Gallery() {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </motion.button>
             ))}
           </div>
         )}

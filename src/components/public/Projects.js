@@ -1,7 +1,8 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import SectionHeader from "../ui/SectionHeader";
 import GlassCard from "../ui/GlassCard";
 import { FaGithub, FaExternalLinkAlt } from "react-icons/fa";
@@ -11,7 +12,7 @@ import { usePortfolioContent } from "@/components/providers/PortfolioContentProv
 export default function Projects() {
   const { projects, settings } = usePortfolioContent();
   const ui = getUiSettings(settings);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const [expandedProjects, setExpandedProjects] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const categoryName = value => value?.trim().toLowerCase() === "bakery" ? "Business Websites" : value || "Other";
@@ -53,9 +54,10 @@ export default function Projects() {
 
         <motion.div layout className={`grid gap-4 items-stretch ${ui.uiProjectCardSize === "large" ? "md:grid-cols-2" : "md:grid-cols-2 lg:grid-cols-3"}`}>
           <AnimatePresence>
-            {visibleProjects.map((project, i) => (
+            {projects.map((project, i) => (
               <motion.div
                 key={project.id}
+                hidden={!visibleProjects.includes(project)}
                 className="min-w-0 h-full"
                 layout
                 initial={false}
@@ -105,8 +107,8 @@ export default function Projects() {
                       ))}
                     </div>
                     <div className="mt-3 flex flex-wrap gap-4 border-t border-white/10 pt-2 text-sm font-semibold">
-                      {project.liveUrl && <a href={project.liveUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-cyan-300 hover:text-cyan-100"><FaExternalLinkAlt /> Live Demo</a>}
-                      {project.github && <a href={project.github} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-gray-300 hover:text-white"><FaGithub /> GitHub</a>}
+                      {project.liveUrl && <a href={project.liveUrl} aria-label={`View ${project.title} live demo (opens in a new tab)`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-cyan-300 hover:text-cyan-100"><FaExternalLinkAlt /> Live Demo</a>}
+                      {project.github && <a href={project.github} aria-label={`View ${project.title} on GitHub (opens in a new tab)`} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center gap-2 text-gray-300 hover:text-white"><FaGithub /> GitHub</a>}
                     </div>
                   </div>
                 </GlassCard>

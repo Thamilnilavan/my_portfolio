@@ -1,13 +1,13 @@
 "use client";
 import { useState, useEffect } from "react";
 
-export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000) {
-  const [displayText, setDisplayText] = useState("");
+export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, pauseDuration = 2000, enabled = true) {
+  const [displayText, setDisplayText] = useState(texts[0] || "");
   const [textIndex, setTextIndex] = useState(0);
   const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
-    if (!texts.length) {
+    if (!enabled || !texts.length) {
       return undefined;
     }
 
@@ -35,7 +35,7 @@ export function useTypewriter(texts, typingSpeed = 100, deletingSpeed = 50, paus
       clearTimeout(timeout);
       clearTimeout(pauseTimeout);
     };
-  }, [displayText, isDeleting, textIndex, texts, typingSpeed, deletingSpeed, pauseDuration]);
+  }, [displayText, isDeleting, textIndex, texts, typingSpeed, deletingSpeed, pauseDuration, enabled]);
 
   return displayText;
 }

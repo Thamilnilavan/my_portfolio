@@ -1,8 +1,10 @@
 "use client";
+import { useMotionPreference } from "./MotionProvider";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 
 export default function MagneticButton({ children, className = "", ...props }) {
+  const reduceMotion = useMotionPreference();
   const ref = useRef(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
@@ -23,9 +25,9 @@ export default function MagneticButton({ children, className = "", ...props }) {
   return (
     <motion.button
       ref={ref}
-      onMouseMove={handleMouse}
+      onMouseMove={reduceMotion ? undefined : handleMouse}
       onMouseLeave={reset}
-      animate={{ x, y }}
+      animate={reduceMotion ? { x: 0, y: 0 } : { x, y }}
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       className={className}
       {...props}

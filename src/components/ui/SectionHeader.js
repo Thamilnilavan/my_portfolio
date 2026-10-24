@@ -1,9 +1,10 @@
 "use client";
-import { motion, useReducedMotion } from "framer-motion";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
+import { motion } from "framer-motion";
 import TextReveal from "../effects/TextReveal";
 
 export default function SectionHeader({ subtitle, title, description, className = "" }) {
-  const reducedMotion = useReducedMotion();
+  const reducedMotion = useMotionPreference();
   return (
     <div className={`text-center mb-6 md:mb-8 ${className}`}>
       <motion.div 

@@ -1,5 +1,4 @@
 "use client";
-import { motion } from "framer-motion";
 import { HiArrowUp } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram } from "react-icons/fa";
 import { usePortfolioContent } from "@/components/providers/PortfolioContentProvider";
@@ -7,14 +6,14 @@ import { usePortfolioContent } from "@/components/providers/PortfolioContentProv
 export default function Footer() {
   const { settings: s } = usePortfolioContent();
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
   };
 
   const socialLinks = [
-    { Icon: FaGithub, href: s.github },
-    { Icon: FaLinkedin, href: s.linkedin },
-    { Icon: FaTwitter, href: s.twitter },
-    { Icon: FaInstagram, href: s.instagram },
+    { Icon: FaGithub, href: s.github, label: "GitHub" },
+    { Icon: FaLinkedin, href: s.linkedin, label: "LinkedIn" },
+    { Icon: FaTwitter, href: s.twitter, label: "X" },
+    { Icon: FaInstagram, href: s.instagram, label: "Instagram" },
   ].filter((item) => item.href);
 
   return (
@@ -31,7 +30,7 @@ export default function Footer() {
               <span className="text-white">THAMIL</span>
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00D4FF] via-[#7C3AED] to-[#FFD700]">NILAVAN</span>
             </div>
-            <p className="text-gray-500 text-sm max-w-xs mx-auto md:mx-0">
+            <p className="text-gray-400 text-sm max-w-xs mx-auto md:mx-0">
               Building premium digital experiences that inspire and perform.
             </p>
           </div>
@@ -51,18 +50,20 @@ export default function Footer() {
 
           {/* Socials & Top Button */}
           <div className="flex items-center justify-center md:justify-end gap-6">
-            {socialLinks.map(({ Icon, href }, i) => (
+            {socialLinks.map(({ Icon, href, label }, i) => (
               <a
                 key={i}
                 href={href}
+                aria-label={`${label} (opens in a new tab)`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-gray-500 hover:text-[#00D4FF] transition-colors"
+                className="text-gray-400 hover:text-[#00D4FF] transition-colors"
               >
                 <Icon size={20} />
               </a>
             ))}
             <button 
+              aria-label="Back to top"
               onClick={scrollToTop}
               className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors ml-4 border border-white/10"
             >
@@ -71,7 +72,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-white/10 text-center text-sm text-gray-600">
+        <div className="pt-8 border-t border-white/10 text-center text-sm text-gray-400">
           <p>© {new Date().getFullYear()} Thamilnilavan. All rights reserved.</p>
         </div>
       </div>

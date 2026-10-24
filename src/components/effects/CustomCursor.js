@@ -1,7 +1,8 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 
 import { useEffect, useState } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
   const pointerX = useMotionValue(-100);
@@ -11,7 +12,7 @@ export default function CustomCursor() {
   const ringX = useSpring(pointerX, { stiffness: 320, damping: 32, mass: 0.35 });
   const ringY = useSpring(pointerY, { stiffness: 320, damping: 32, mass: 0.35 });
   const [isHovering, setIsHovering] = useState(false);
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
 
   useEffect(() => {
     if (reduceMotion) return undefined;

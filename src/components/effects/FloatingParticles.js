@@ -1,4 +1,5 @@
 "use client";
+import { useMotionPreference } from "./MotionProvider";
 import { useEffect, useRef } from "react";
 
 class Particle {
@@ -28,10 +29,11 @@ class Particle {
 }
 
 export default function FloatingParticles() {
+  const reduceMotion = useMotionPreference();
   const canvasRef = useRef(null);
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (reduceMotion || !window.matchMedia("(min-width: 768px)").matches) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     
@@ -87,10 +89,11 @@ export default function FloatingParticles() {
       window.removeEventListener("resize", resize);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [reduceMotion]);
 
   return (
     <canvas
+      aria-hidden="true"
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none -z-5 opacity-40 mix-blend-screen hidden md:block"
     />

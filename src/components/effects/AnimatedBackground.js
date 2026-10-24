@@ -1,14 +1,16 @@
 "use client";
+import { useMotionPreference } from "./MotionProvider";
 import { motion } from "framer-motion";
 
 export default function AnimatedBackground() {
+  const reduceMotion = useMotionPreference();
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[var(--bg-primary)]">
+    <div aria-hidden="true" className="fixed inset-0 overflow-hidden pointer-events-none -z-10 bg-[var(--bg-primary)]">
       {/* Cinematic Orbs */}
       <motion.div
         className="absolute -top-[20%] -right-[10%] w-[60vw] h-[60vw] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(124, 58, 237, 0.15) 0%, transparent 70%)' }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, 100, 0],
           y: [0, 50, 0],
           scale: [1, 1.2, 1]
@@ -18,7 +20,7 @@ export default function AnimatedBackground() {
       <motion.div
         className="absolute top-[30%] -left-[15%] w-[50vw] h-[50vw] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(0, 212, 255, 0.12) 0%, transparent 70%)' }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, -80, 0],
           y: [0, -60, 0],
           scale: [1, 1.3, 1]
@@ -28,7 +30,7 @@ export default function AnimatedBackground() {
       <motion.div
         className="absolute bottom-[10%] right-[20%] w-[40vw] h-[40vw] rounded-full"
         style={{ background: 'radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%)' }}
-        animate={{
+        animate={reduceMotion ? undefined : {
           x: [0, 60, 0],
           y: [0, -40, 0],
           scale: [1, 1.15, 1]

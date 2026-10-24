@@ -14,10 +14,11 @@ const Button = forwardRef(({ children, variant = "gradient", className = "", ...
     secondary: "bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:shadow-[0_0_40px_rgba(168,85,247,0.5)] transform hover:scale-105 active:scale-95"
   };
 
+  const Component = props.href ? motion.a : motion.button;
   return (
-    <motion.button
+    <Component
       ref={ref}
-      type={props.type || "button"}
+      type={props.href ? undefined : props.type || "button"}
       className={`${baseStyles} ${variants[variant]} ${className}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -34,7 +35,7 @@ const Button = forwardRef(({ children, variant = "gradient", className = "", ...
       {(variant === "primary" || variant === "secondary") && (
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 z-10" />
       )}
-    </motion.button>
+    </Component>
   );
 });
 

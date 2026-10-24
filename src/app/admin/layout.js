@@ -1,6 +1,8 @@
+import { pages } from "@/lib/siteMetadata";
+
 export const metadata = {
-  title: "Portfolio Admin",
-  robots: { index: false, follow: false },
+  title: pages.admin.title,
+  robots: { index: false, follow: true },
 };
 
 export default function AdminLayout({ children }) {

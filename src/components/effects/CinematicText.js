@@ -1,9 +1,12 @@
 "use client";
+import { useMotionPreference } from "./MotionProvider";
 import { useEffect } from "react";
 
 // Animate text as it enters the viewport without changing React-owned markup.
 export default function CinematicText() {
+  const reduceMotion = useMotionPreference();
   useEffect(() => {
+    if (reduceMotion) return;
     const root = document.querySelector("main");
     if (!root) return;
     const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -34,7 +37,7 @@ export default function CinematicText() {
     }, { threshold: 0.15, rootMargin: "0px 0px -25px 0px" });
     const scan = () => root.querySelectorAll("h1, h2, h3, p, label, summary").forEach(element => {
       // Word reveals have their own timing; do not animate their parent twice.
-      if (observed.has(element) || element.matches(".sr-only") || element.closest('[aria-hidden="true"]') || element.querySelector("[data-cinematic-text]") || element.closest("#contact header")) return;
+      if (observed.has(element) || element.matches(".sr-only") || element.closest('[aria-hidden="true"]') || element.querySelector("[data-cinematic-text]") || element.closest("#contact header, #home")) return;
       observed.add(element);
       observer.observe(element);
     });
@@ -49,6 +52,6 @@ export default function CinematicText() {
       preference.removeEventListener("change", stop);
       running.forEach(animation => animation.cancel());
     };
-  }, []);
+  }, [reduceMotion]);
   return null;
 }

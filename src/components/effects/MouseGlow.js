@@ -1,14 +1,15 @@
 "use client";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
 
 import { useEffect } from "react";
-import { motion, useMotionValue, useReducedMotion, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function MouseGlow() {
   const pointerX = useMotionValue(-1000);
   const pointerY = useMotionValue(-1000);
   const x = useSpring(pointerX, { stiffness: 110, damping: 28, mass: 0.7 });
   const y = useSpring(pointerY, { stiffness: 110, damping: 28, mass: 0.7 });
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
 
   useEffect(() => {
     if (reduceMotion) return undefined;

@@ -1,6 +1,8 @@
 "use client";
-import { motion, useScroll, useTransform, useReducedMotion } from "framer-motion";
-import Image from "next/image";
+import { useMotionPreference } from "@/components/effects/MotionProvider";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useMemo } from "react";
+import { getImageProps } from "next/image";
 import { HiArrowDown, HiOutlineDownload, HiPlay } from "react-icons/hi";
 import { FaGithub, FaLinkedin, FaTwitter, FaInstagram, FaReact, FaNodeJs, FaPython, FaDatabase, FaCloud, FaCode } from "react-icons/fa";
 import { SiNextdotjs, SiTailwindcss, SiJavascript, SiTypescript, SiMongodb, SiGit, SiDocker, SiPostgresql } from "react-icons/si";
@@ -29,14 +31,14 @@ const innerIconPositions = [
 
 export default function Hero() {
   const { settings: s } = usePortfolioContent();
-  const reduceMotion = useReducedMotion();
+  const reduceMotion = useMotionPreference();
   const { scrollY } = useScroll();
   
-  const roles = s.typewriterRoles
+  const roles = useMemo(() => s.typewriterRoles
     ? s.typewriterRoles.split(",").map((r) => r.trim()).filter(Boolean)
-    : ["Full-Stack Developer"];
+    : ["Full-Stack Developer"], [s.typewriterRoles]);
 
-  const animatedRole = useTypewriter(roles.length ? roles : ["Developer"], 65, 35, 3500);
+  const animatedRole = useTypewriter(roles.length ? roles : ["Developer"], 65, 35, 3500, !reduceMotion);
   const role = reduceMotion ? roles[0] || "Developer" : animatedRole;
 
   const scrollTo = (id) => {
@@ -75,7 +77,7 @@ export default function Hero() {
       <div className="absolute inset-0 overflow-hidden">
         <motion.div 
           className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[150px] -z-10"
-          animate={{ 
+          animate={reduceMotion ? undefined : {
             scale: [1, 1.2, 1],
             opacity: [0.3, 0.5, 0.3]
           }}
@@ -83,7 +85,7 @@ export default function Hero() {
         />
         <motion.div 
           className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] -z-10"
-          animate={{ 
+          animate={reduceMotion ? undefined : {
             scale: [1.2, 1, 1.2],
             opacity: [0.4, 0.6, 0.4]
           }}
@@ -91,7 +93,7 @@ export default function Hero() {
         />
         <motion.div 
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-pink-500/5 rounded-full blur-[120px] -z-10"
-          animate={{ 
+          animate={reduceMotion ? undefined : {
             scale: [1, 1.3, 1],
             opacity: [0.2, 0.4, 0.2]
           }}
@@ -106,13 +108,13 @@ export default function Hero() {
         >
           <motion.div
             initial={false}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.6, type: "spring" }}
             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-[#00D4FF]/40 mb-5 sm:mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(0,212,255,0.2)]"
           >
             <motion.span 
               className="w-2.5 h-2.5 rounded-full bg-[#00D4FF] shadow-[0_0_15px_#00D4FF]"
-              animate={{ 
+              animate={reduceMotion ? undefined : {
                 scale: [1, 1.5, 1],
                 opacity: [1, 0.5, 1]
               }}
@@ -123,7 +125,7 @@ export default function Hero() {
 
           <motion.h1 
             initial={false}
-            animate={{ opacity: 1, y: 0 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
             className="text-[clamp(2rem,8.5vw,2.5rem)] sm:text-5xl lg:text-[64px] font-extrabold tracking-[-0.04em] mb-6 leading-tight"
           >
@@ -135,7 +137,7 @@ export default function Hero() {
 
           <motion.div 
             initial={false}
-            animate={{ opacity: 1, y: 0 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
             className="min-h-[4.2rem] sm:min-h-14 mb-4"
           >
@@ -143,7 +145,7 @@ export default function Hero() {
               I am a <span className="text-white font-semibold text-gradient">{role}</span>
               <motion.span 
                 className="animate-pulse text-[#00D4FF]"
-                animate={{ opacity: [1, 0.3, 1] }}
+                animate={reduceMotion ? undefined : { opacity: [1, 0.3, 1] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
               >|</motion.span>
             </p>
@@ -151,7 +153,7 @@ export default function Hero() {
 
           <motion.div 
             initial={false}
-            animate={{ opacity: 1, y: 0 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
             className="text-base md:text-lg text-gray-300 mb-8 max-w-xl leading-[1.7]"
           >
@@ -160,13 +162,13 @@ export default function Hero() {
 
           <motion.div
             initial={false}
-            animate={{ opacity: 1, y: 0 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
             className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 [&_button]:w-full sm:[&_button]:w-auto [&_button]:px-3 sm:[&_button]:px-5 [&_button]:text-xs sm:[&_button]:text-sm"
           >
             <Button 
               variant="gradient"
-              onClick={() => scrollTo("#contact")}
+              href="#contact"
             >
               <span className="flex items-center gap-2">
                 <HiPlay className="text-xl" /> GET IN TOUCH
@@ -174,7 +176,7 @@ export default function Hero() {
             </Button>
             <Button 
               variant="outline"
-              onClick={() => scrollTo("#projects")}
+              href="#projects"
             >
               VIEW PROJECTS
             </Button>
@@ -193,7 +195,7 @@ export default function Hero() {
           {socials.length > 0 && (
             <motion.div
               initial={false}
-              animate={{ opacity: 1, y: 0 }}
+              animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
               transition={{ delay: 1, duration: 0.6 }}
               className="flex flex-wrap items-center gap-3 sm:gap-5 mt-6 sm:mt-8"
             >
@@ -203,12 +205,12 @@ export default function Hero() {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={`Visit my ${href.includes("github") ? "GitHub" : href.includes("linkedin") ? "LinkedIn" : href.includes("instagram") ? "Instagram" : "X"} profile`}
+                  aria-label={`Visit my ${href.includes("github") ? "GitHub" : href.includes("linkedin") ? "LinkedIn" : href.includes("instagram") ? "Instagram" : "X"} profile (opens in a new tab)`}
                   className="text-gray-400 hover:text-[#00D4FF] transition-colors p-3 hover:bg-white/10 rounded-full border border-white/10 hover:border-[#00D4FF]/40 neon-border-glow"
                   whileHover={{ scale: 1.15, rotate: 8, y: -5 }}
                   whileTap={{ scale: 0.95 }}
                   initial={{ opacity: 0, scale: 0 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
                   transition={{ delay: 1.2 + i * 0.1, type: "spring", stiffness: 400 }}
                 >
                   <Icon size={22} />
@@ -225,7 +227,7 @@ export default function Hero() {
           <motion.div
             className="relative h-[500px] w-[500px] shrink-0 scale-[0.78] xl:scale-95 2xl:scale-100 rounded-full"
             initial={false}
-            animate={{ opacity: 1, scale: 1 }}
+            animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
             transition={{ duration: 1.2, delay: 0.2, type: "spring" }}
           >
             {/* Floating skill icons - outer circle */}
@@ -241,14 +243,14 @@ export default function Hero() {
                     x: x,
                     y: y,
                   }}
-                  animate={{
+                  animate={reduceMotion ? undefined : {
                     rotate: 360,
                   }}
                   transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 >
                   <motion.div
                     className="relative"
-                    animate={{
+                    animate={reduceMotion ? undefined : {
                       rotate: -360,
                       y: [0, -12, 0],
                     }}
@@ -281,14 +283,14 @@ export default function Hero() {
                     x: x,
                     y: y,
                   }}
-                  animate={{
+                  animate={reduceMotion ? undefined : {
                     rotate: -360,
                   }}
                   transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                 >
                   <motion.div
                     className="relative"
-                    animate={{
+                    animate={reduceMotion ? undefined : {
                       rotate: 360,
                       y: [0, 10, 0],
                     }}
@@ -311,21 +313,21 @@ export default function Hero() {
             {/* Outer rotating ring */}
             <motion.div
               className="absolute inset-0 rounded-full border-2 border-[#00D4FF]/40 border-t-[#00D4FF] border-r-[#7C3AED]"
-              animate={{ rotate: 360 }}
+              animate={reduceMotion ? undefined : { rotate: 360 }}
               transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
               style={{ boxShadow: "0 0 40px rgba(0, 212, 255, 0.4)" }}
             />
             {/* Middle rotating ring */}
             <motion.div
               className="absolute inset-8 rounded-full border-2 border-[#7C3AED]/40 border-b-[#7C3AED] border-l-[#FFD700]"
-              animate={{ rotate: -360 }}
+              animate={reduceMotion ? undefined : { rotate: -360 }}
               transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
               style={{ boxShadow: "0 0 35px rgba(124, 58, 237, 0.4)" }}
             />
             {/* Inner rotating ring */}
             <motion.div
               className="absolute inset-16 rounded-full border-2 border-[#FFD700]/40 border-t-[#FFD700] border-r-[#00D4FF]"
-              animate={{ rotate: 360 }}
+              animate={reduceMotion ? undefined : { rotate: 360 }}
               transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
               style={{ boxShadow: "0 0 30px rgba(255, 215, 0, 0.4)" }}
             />
@@ -336,15 +338,11 @@ export default function Hero() {
               transition={{ type: "spring", stiffness: 300 }}
             >
               {s.profileImage ? (
-                <Image
-                  src={s.profileImage}
-                  alt={`${s.name} profile photo`}
-                  fill
-                  preload
-                  unoptimized={s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/")}
-                  sizes="(max-width: 768px) 224px, 340px"
-                  className="w-full h-full object-cover"
-                />
+                <picture>
+                  <source media="(min-width: 1024px)" srcSet={getImageProps({ src: s.profileImage, alt: `${s.name} profile photo`, width: 340, height: 340, sizes: "340px", unoptimized: s.profileImage.startsWith("http") || s.profileImage.startsWith("/api/images/") }).props.srcSet || s.profileImage} />
+                  {/* The desktop portrait must not download on phones. */}
+                  <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt={`${s.name} profile photo`} width="340" height="340" loading="eager" className="w-full h-full object-cover" />
+                </picture>
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-6xl font-bold text-gray-500 bg-gradient-to-br from-cyan-500/20 to-purple-500/20">
                   {s.name?.charAt(0) || "?"}
@@ -359,7 +357,7 @@ export default function Hero() {
         type="button"
         aria-label="Scroll to the About section"
         className="absolute bottom-10 left-1/2 -translate-x-1/2 cursor-pointer text-gray-400 hover:text-[#00D4FF] transition-colors"
-        animate={{ y: [0, 20, 0] }}
+        animate={reduceMotion ? undefined : { y: [0, 20, 0] }}
         transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
         whileHover={{ scale: 1.1, y: 25 }}
         onClick={() => scrollTo("#about")}
