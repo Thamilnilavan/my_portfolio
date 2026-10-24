@@ -359,5 +359,3 @@ main p { line-height: 1.65; }
 main .text-gray-500 { color: #a1a1aa; }
 main input::placeholder, main textarea::placeholder { color: #a1a1aa; }
 
-[data-motion-paused="true"] *, [data-motion-paused="true"] *::before, [data-motion-paused="true"] *::after { animation-play-state: paused !important; transition-duration: 0s !important; scroll-behavior: auto !important; }
-[data-motion-paused="true"] .hero-copy { transform: none !important; }
