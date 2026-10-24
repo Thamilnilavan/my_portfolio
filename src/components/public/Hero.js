@@ -29,17 +29,21 @@ const innerIconPositions = [
   { x: 147.224, y: -85 },
 ];
 
+function HeroRole({ roles }) {
+  const reduceMotion = useMotionPreference();
+  const role = useTypewriter(roles, 65, 35, 3500, !reduceMotion);
+  return <><span className="sr-only">I am a {roles.join(", ")}</span><span aria-hidden="true">I am a <span className="text-white font-semibold text-gradient">{reduceMotion ? roles[0] : role}</span><span className="motion-safe:animate-pulse text-cyan-300">|</span></span></>;
+}
+
 export default function Hero() {
   const { settings: s } = usePortfolioContent();
   const reduceMotion = useMotionPreference();
   const { scrollY } = useScroll();
-  
+
   const roles = useMemo(() => s.typewriterRoles
     ? s.typewriterRoles.split(",").map((r) => r.trim()).filter(Boolean)
     : ["Full-Stack Developer"], [s.typewriterRoles]);
 
-  const animatedRole = useTypewriter(roles.length ? roles : ["Developer"], 65, 35, 3500, !reduceMotion);
-  const role = reduceMotion ? roles[0] || "Developer" : animatedRole;
 
   const scrollTo = (id) => {
     document.querySelector(id)?.scrollIntoView({ behavior: reduceMotion ? "instant" : "smooth" });
@@ -68,41 +72,15 @@ export default function Hero() {
 
   // Parallax transforms
   const yText = useTransform(scrollY, [0, 500], [0, 100]);
-  const yProfile = useTransform(scrollY, [0, 500], [0, -50]);
-  const rotateProfile = useTransform(scrollY, [0, 500], [0, 10]);
 
   return (
     <section id="home" className="relative min-h-[80svh] flex items-center justify-center pt-28 pb-20 lg:pt-32 lg:pb-20 overflow-hidden">
-      {/* Background gradient effects */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div 
-          className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-[150px] -z-10"
-          animate={reduceMotion ? undefined : {
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-[500px] h-[500px] bg-purple-500/10 rounded-full blur-[150px] -z-10"
-          animate={reduceMotion ? undefined : {
-            scale: [1.2, 1, 1.2],
-            opacity: [0.4, 0.6, 0.4]
-          }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[400px] bg-pink-500/5 rounded-full blur-[120px] -z-10"
-          animate={reduceMotion ? undefined : {
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
+      <div aria-hidden="true" className="hero-atmosphere pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="hero-light hero-light-cyan" /><div className="hero-light hero-light-violet" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 relative z-10 w-full grid lg:grid-cols-2 gap-12 items-center">
-        <motion.div 
+        <motion.div
           style={reduceMotion ? undefined : { y: yText }}
           className="hero-copy min-w-0 text-left"
         >
@@ -112,7 +90,7 @@ export default function Hero() {
             transition={{ duration: 0.6, type: "spring" }}
             className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-white/5 border border-[#00D4FF]/40 mb-5 sm:mb-8 backdrop-blur-md shadow-[0_0_30px_rgba(0,212,255,0.2)]"
           >
-            <motion.span 
+            <motion.span
               className="w-2.5 h-2.5 rounded-full bg-[#00D4FF] shadow-[0_0_15px_#00D4FF]"
               animate={reduceMotion ? undefined : {
                 scale: [1, 1.5, 1],
@@ -123,7 +101,7 @@ export default function Hero() {
             <span className="text-xs sm:text-sm font-semibold text-gray-200">{s.availabilityText}</span>
           </motion.div>
 
-          <motion.h1 
+          <motion.h1
             initial={false}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.6, type: "spring" }}
@@ -135,23 +113,18 @@ export default function Hero() {
             </span>
           </motion.h1>
 
-          <motion.div 
+          <motion.div
             initial={false}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
             className="min-h-[4.2rem] sm:min-h-14 mb-4"
           >
             <p className="text-xl md:text-[28px] text-gray-400 font-light">
-              I am a <span className="text-white font-semibold text-gradient">{role}</span>
-              <motion.span 
-                className="animate-pulse text-[#00D4FF]"
-                animate={reduceMotion ? undefined : { opacity: [1, 0.3, 1] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >|</motion.span>
+              <HeroRole roles={roles} />
             </p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={false}
             animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
             transition={{ delay: 0.6, duration: 0.6 }}
@@ -166,7 +139,7 @@ export default function Hero() {
             transition={{ delay: 0.8, duration: 0.6 }}
             className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center sm:gap-3 [&_button]:w-full sm:[&_button]:w-auto [&_button]:px-3 sm:[&_button]:px-5 [&_button]:text-xs sm:[&_button]:text-sm"
           >
-            <Button 
+            <Button
               variant="gradient"
               href="#contact"
             >
@@ -174,7 +147,7 @@ export default function Hero() {
                 <HiPlay className="text-xl" /> GET IN TOUCH
               </span>
             </Button>
-            <Button 
+            <Button
               variant="outline"
               href="#projects"
             >
@@ -209,7 +182,7 @@ export default function Hero() {
                   className="text-gray-400 hover:text-[#00D4FF] transition-colors p-3 hover:bg-white/10 rounded-full border border-white/10 hover:border-[#00D4FF]/40 neon-border-glow"
                   whileHover={{ scale: 1.15, rotate: 8, y: -5 }}
                   whileTap={{ scale: 0.95 }}
-                  initial={{ opacity: 0, scale: 0 }}
+                  initial={false}
                   animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
                   transition={{ delay: 1.2 + i * 0.1, type: "spring", stiffness: 400 }}
                 >
@@ -220,53 +193,37 @@ export default function Hero() {
           )}
         </motion.div>
 
-        <motion.div 
-          style={reduceMotion ? undefined : { y: yProfile, rotate: rotateProfile }}
+        <div
+
           className="relative hidden min-w-0 lg:flex justify-center items-center h-full"
         >
-          <motion.div
-            className="relative h-[500px] w-[500px] shrink-0 scale-[0.78] xl:scale-95 2xl:scale-100 rounded-full"
-            initial={false}
-            animate={reduceMotion ? undefined : { opacity: 1, scale: 1 }}
-            transition={{ duration: 1.2, delay: 0.2, type: "spring" }}
+          <div
+            className="hero-portrait relative h-[500px] w-[500px] shrink-0 scale-[0.78] xl:scale-95 2xl:scale-100 rounded-full"
           >
             {/* Floating skill icons - outer circle */}
             {skillIcons.slice(0, 6).map((skill, index) => {
               const { x, y } = outerIconPositions[index];
               return (
-                <motion.div
+                <div
                   key={`outer-${index}`}
                   className="absolute"
                   style={{
                     left: "50%",
                     top: "50%",
-                    x: x,
-                    y: y,
+                    transform: `translate(${x}px, ${y}px)`,
                   }}
-                  animate={reduceMotion ? undefined : {
-                    rotate: 360,
-                  }}
-                  transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
                 >
-                  <motion.div
-                    className="relative"
-                    animate={reduceMotion ? undefined : {
-                      rotate: -360,
-                      y: [0, -12, 0],
-                    }}
-                    transition={{
-                      rotate: { duration: 30, repeat: Infinity, ease: "linear" },
-                      y: { duration: 2.5, repeat: Infinity, ease: "easeInOut", delay: index * 0.2 }
-                    }}
+                  <div
+                    className="hero-icon-float"
                   >
                     <div
                       className="w-14 h-14 rounded-full bg-[#050508]/90 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-[0_0_25px_rgba(0,212,255,0.4)] hover:shadow-[0_0_40px_rgba(0,212,255,0.6)] transition-all duration-300 hover:scale-110"
                       style={{ color: skill.color }}
                     >
-                      <skill.Icon size={skill.size} />
+                      <skill.Icon aria-hidden="true" size={skill.size} />
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               );
             })}
 
@@ -274,68 +231,47 @@ export default function Hero() {
             {skillIcons.slice(6, 12).map((skill, index) => {
               const { x, y } = innerIconPositions[index];
               return (
-                <motion.div
+                <div
                   key={`inner-${index}`}
                   className="absolute"
                   style={{
                     left: "50%",
                     top: "50%",
-                    x: x,
-                    y: y,
+                    transform: `translate(${x}px, ${y}px)`,
                   }}
-                  animate={reduceMotion ? undefined : {
-                    rotate: -360,
-                  }}
-                  transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                 >
-                  <motion.div
-                    className="relative"
-                    animate={reduceMotion ? undefined : {
-                      rotate: 360,
-                      y: [0, 10, 0],
-                    }}
-                    transition={{
-                      rotate: { duration: 25, repeat: Infinity, ease: "linear" },
-                      y: { duration: 2, repeat: Infinity, ease: "easeInOut", delay: index * 0.15 }
-                    }}
+                  <div
+                    className="hero-icon-float"
                   >
                     <div
                       className="w-12 h-12 rounded-full bg-[#050508]/90 backdrop-blur-md border border-white/10 flex items-center justify-center shadow-[0_0_20px_rgba(124,58,237,0.4)] hover:shadow-[0_0_35px_rgba(124,58,237,0.6)] transition-all duration-300 hover:scale-110"
                       style={{ color: skill.color }}
                     >
-                      <skill.Icon size={skill.size - 2} />
+                      <skill.Icon aria-hidden="true" size={skill.size - 2} />
                     </div>
-                  </motion.div>
-                </motion.div>
+                  </div>
+                </div>
               );
             })}
 
             {/* Outer rotating ring */}
-            <motion.div
-              className="absolute inset-0 rounded-full border-2 border-[#00D4FF]/40 border-t-[#00D4FF] border-r-[#7C3AED]"
-              animate={reduceMotion ? undefined : { rotate: 360 }}
-              transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+            <div
+              className="hero-ring absolute inset-0 rounded-full border-2 border-[#00D4FF]/40 border-t-[#00D4FF] border-r-[#7C3AED]"
               style={{ boxShadow: "0 0 40px rgba(0, 212, 255, 0.4)" }}
             />
             {/* Middle rotating ring */}
-            <motion.div
-              className="absolute inset-8 rounded-full border-2 border-[#7C3AED]/40 border-b-[#7C3AED] border-l-[#FFD700]"
-              animate={reduceMotion ? undefined : { rotate: -360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+            <div
+              className="hero-ring hero-ring-reverse absolute inset-8 rounded-full border-2 border-[#7C3AED]/40 border-b-[#7C3AED] border-l-[#FFD700]"
               style={{ boxShadow: "0 0 35px rgba(124, 58, 237, 0.4)" }}
             />
             {/* Inner rotating ring */}
-            <motion.div
-              className="absolute inset-16 rounded-full border-2 border-[#FFD700]/40 border-t-[#FFD700] border-r-[#00D4FF]"
-              animate={reduceMotion ? undefined : { rotate: 360 }}
-              transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+            <div
+              className="hero-ring hero-ring-fast absolute inset-16 rounded-full border-2 border-[#FFD700]/40 border-t-[#FFD700] border-r-[#00D4FF]"
               style={{ boxShadow: "0 0 30px rgba(255, 215, 0, 0.4)" }}
             />
             {/* Profile image */}
-            <motion.div 
+            <div
               className="absolute inset-20 rounded-full bg-[#050508] border-2 border-white/10 overflow-hidden flex items-center justify-center shadow-[0_0_80px_rgba(0,212,255,0.3),0_0_120px_rgba(124,58,237,0.2)]"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
             >
               {s.profileImage ? (
                 <picture>
@@ -348,9 +284,9 @@ export default function Hero() {
                   {s.name?.charAt(0) || "?"}
                 </div>
               )}
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <motion.button

@@ -72,7 +72,7 @@ export default function About() {
           <div aria-hidden="true" className="absolute inset-1 rotate-[-4deg] rounded-[32px] border border-violet-300/25 bg-gradient-to-br from-violet-400/10 to-cyan-300/5" />
           <div className="relative overflow-hidden rounded-[28px] border border-cyan-300/20 bg-[#0b101b] shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
             <div className="relative aspect-[4/5]">
-              <Image src={about.aboutImage} alt={`${settings.name || "Developer"} portrait`} fill sizes="(max-width: 1023px) 296px, 1px" unoptimized={about.aboutImage.startsWith("http") || about.aboutImage.startsWith("/api/images/")} className="object-cover object-top" />
+              <Image src={about.aboutImage} alt={`${settings.name || "Developer"} portrait`} fill sizes="(max-width: 1023px) 296px, 1px" unoptimized={about.aboutImage.startsWith("http")} className="object-cover object-top" />
               <div aria-hidden="true" className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080d18] via-transparent to-transparent" />
               <span aria-hidden="true" className="absolute left-4 top-4 h-6 w-6 border-l border-t border-cyan-200/60" /><span aria-hidden="true" className="absolute bottom-4 right-4 h-6 w-6 border-b border-r border-violet-200/60" />
             </div>

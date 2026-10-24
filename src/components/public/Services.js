@@ -34,7 +34,7 @@ export default function Services() {
                 <div aria-hidden="true" className={`pointer-events-none absolute -bottom-16 -right-10 h-48 w-48 rounded-full blur-3xl opacity-40 ${accent.glow}`} />
                 <div className="relative mb-3 flex items-center justify-between">
                   <span className={`grid h-11 w-11 place-items-center rounded-xl border border-white/10 bg-gradient-to-br shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] transition-transform duration-300 motion-safe:group-hover:-rotate-6 ${accent.icon} ${accent.text}`}><Icon size={23} /></span>
-                  <span aria-hidden="true" className="text-4xl font-black leading-none tracking-tighter text-white/[0.04] sm:text-4xl">{String(index + 1).padStart(2, "0")}</span>
+                  <span aria-hidden="true" className="text-4xl font-black leading-none tracking-tighter text-slate-400 sm:text-4xl">{String(index + 1).padStart(2, "0")}</span>
                 </div>
                 <h3 className="relative mb-2 text-lg font-bold leading-snug tracking-tight text-white">{service.title}</h3>
                 <p className="relative mb-3 max-w-[48ch] flex-1 text-sm leading-[1.7] text-gray-300">{service.description}</p>

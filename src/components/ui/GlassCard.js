@@ -33,6 +33,8 @@ export default function GlassCard({ children, className = "", contentClassName =
     setIsHovered(true);
   };
 
+  if (!tilt) return <div className={`glass relative overflow-hidden rounded-3xl p-6 transition-colors duration-300 hover:bg-[var(--bg-card-hover)] hover:border-cyan-400/40 ${className}`} {...props}><div className={`relative h-full ${contentClassName}`}>{children}</div></div>;
+
   return (
     <motion.div
       ref={ref}

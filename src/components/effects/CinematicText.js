@@ -35,15 +35,22 @@ export default function CinematicText() {
         animation.onfinish = () => running.delete(animation);
       });
     }, { threshold: 0.15, rootMargin: "0px 0px -25px 0px" });
-    const scan = () => root.querySelectorAll("h1, h2, h3, p, label, summary").forEach(element => {
-      // Word reveals have their own timing; do not animate their parent twice.
-      if (observed.has(element) || element.matches(".sr-only") || element.closest('[aria-hidden="true"]') || element.querySelector("[data-cinematic-text]") || element.closest("#contact header, #home")) return;
+    const selector = "h2, h3, p, label, summary";
+    const observe = element => {
+      if (observed.has(element) || element.matches(".sr-only") || element.closest('[aria-hidden="true"], #contact header, #home')) return;
       observed.add(element);
       observer.observe(element);
-    });
+    };
+    root.querySelectorAll(selector).forEach(observe);
     const stop = () => { if (preference.matches) running.forEach(animation => animation.cancel()); };
-    scan();
-    const mutations = new MutationObserver(scan);
+    const mutations = new MutationObserver(records => {
+      for (const record of records) for (const node of record.addedNodes) {
+        // Typewriter text nodes require no new observers or page-wide queries.
+        if (!(node instanceof Element)) continue;
+        if (node.matches(selector)) observe(node);
+        node.querySelectorAll(selector).forEach(observe);
+      }
+    });
     mutations.observe(root, { childList: true, subtree: true });
     preference.addEventListener("change", stop);
     return () => {
